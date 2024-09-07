@@ -5,7 +5,7 @@ interface Props {
   navigation: Navigation["navigation"];
 }
 
-interface S {}
+interface S { }
 
 export default class ComponentController extends Component<Props, S> {
   constructor(props: Props) {
