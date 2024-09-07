@@ -1,5 +1,5 @@
 import { ComponentType } from "react";
-import { ComponentHome } from "../pages";
+import { PokemonDetailsView, PokemonsListView } from "../pages";
 
 interface RouteType {
   component: ComponentType<any>;
@@ -8,8 +8,12 @@ interface RouteType {
 
 const routeMap: Array<RouteType> = [
   {
-    component: ComponentHome,
-    path: "Home",
+    component: PokemonsListView,
+    path: 'Home',
+  },
+  {
+    component: PokemonDetailsView,
+    path: 'Details',
   },
 ];
 

@@ -1,3 +1,4 @@
-import ComponentHome from "./BoilerplatePages/ComponentView";
+import PokemonsListView from "./PokemonsList/PokemonsListView";
+import PokemonDetailsView from "./PokemonDetails/PokemonDetailsView";
 
-export { ComponentHome };
+export { PokemonsListView, PokemonDetailsView };
