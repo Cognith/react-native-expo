@@ -1,25 +1,38 @@
-import { FlatList, StyleSheet } from 'react-native';
+import { FlatList, StyleSheet, View } from 'react-native';
 import PokemonsListController from './PokemonsListController';
-import { ActivityIndicator, SafeAreaView, Text } from 'react-native';
-import { Card } from 'react-native-paper';
+import { ActivityIndicator, SafeAreaView } from 'react-native';
 import { PokemonData } from '../../types';
+import { PText } from '../../components';
+import { Image } from 'react-native';
 
 export default class PokemonsListView extends PokemonsListController {
   renderPokemonCard = ({ item }: { item: PokemonData; }) => (
-    <Card
-      style={styles.card}
+    <View style={styles.card}>
+      <PText>{item.id}</PText>
+      <View>
+        <Image
+          source={{
+            uri: item.image,
+            width: 50,
+            height: 50,
 
-    >
-      <Card.Title title={item.name} />
-    </Card>
+          }}
+        />
+      </View>
+      <PText>{item.name}</PText>
+      <View>
+        <View>
+          <PText>{item.types[0]}</PText>
+        </View>
+      </View>
+    </View>
   );
 
   render() {
     const { pokemons, isLoading, error } = this.state;
 
-
     return (
-      <SafeAreaView>
+      <SafeAreaView style={styles.page}>
         {(() => {
           if (isLoading && !pokemons.length) {
             return (
@@ -31,7 +44,7 @@ export default class PokemonsListView extends PokemonsListController {
           }
 
           if (error) {
-            return <Text>Error: {error}</Text>;
+            return <PText>Error: {error}</PText>;
           }
 
           return (
@@ -48,8 +61,11 @@ export default class PokemonsListView extends PokemonsListController {
 }
 
 const styles = StyleSheet.create({
+  page: {
+    backgroundColor: '#111111',
+    color: '#ffffff',
+  },
   card: {
     backgroundColor: '#222222',
   }
-
 });
