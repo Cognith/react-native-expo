@@ -4,6 +4,7 @@ import { PokemonModel } from "../models";
 export class PokeApiPokemonMapper implements PokemonDataMapper {
   map(data: PokemonModel): PokemonData {
     return {
+      id: data.id,
       name: data.name,
       height: data.height,
       weight: data.weight,
