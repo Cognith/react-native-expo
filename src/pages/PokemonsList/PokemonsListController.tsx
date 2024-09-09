@@ -42,13 +42,22 @@ export default class PokemonsListController extends Component<Props, State> {
 
       // Fetch details for each Pokemon
       const pokemonsListWithDetails = await Promise.all(
-        pokemonsList.results.map((pokemon) =>
-          PokemonService.getPokemonDetails(pokemon.url),
-        ),
+        pokemonsList.results.map(async (pokemon) => {
+          try {
+            return PokemonService.getPokemonDetails(pokemon.url);
+          } catch (error) {
+            return null;
+          }
+        }),
+      );
+
+      // Filter out failed data.
+      const filteredPokemons = pokemonsListWithDetails.filter(
+        (pokemon) => pokemon != null,
       );
 
       this.setState((prevState) => ({
-        pokemons: [...prevState.pokemons, ...pokemonsListWithDetails],
+        pokemons: [...prevState.pokemons, ...filteredPokemons],
         offset: prevState.offset + limit,
         isLoading: false,
       }));
@@ -57,6 +66,12 @@ export default class PokemonsListController extends Component<Props, State> {
         error: error instanceof Error ? error.message : 'Unknown error',
         isLoading: false,
       });
+    }
+  };
+
+  fetchMorePokemon = () => {
+    if (!this.state.isLoading) {
+      this.fetchPokemons();
     }
   };
 }
