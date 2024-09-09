@@ -6,11 +6,13 @@ import {
 } from '@react-navigation/stack';
 import * as SplashScreen from 'expo-splash-screen';
 import routeMap from './src/routes/routeMap';
+import { RootStackParamList } from './src/types';
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const Stack = createStackNavigator();
+  const Stack = createStackNavigator<RootStackParamList>();
+
   useEffect(() => {
     async function hideSplashScreen() {
       await SplashScreen.hideAsync();
@@ -36,7 +38,6 @@ export default function RootLayout() {
                 key={index}
                 name={Current.path}
                 component={CurrentComponent}
-                initialParams={Current.params}
               />
             );
           })}
