@@ -1,6 +1,6 @@
 import { ComponentType } from "react";
 import { PokemonDetailsView, PokemonsListView } from "../pages";
-import { PokemonData, RootStackParamList } from "../types";
+import { RootStackParamList } from "../types";
 
 interface RouteType {
   component: ComponentType<any>;

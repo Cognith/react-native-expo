@@ -1,6 +1,6 @@
 import { Component } from 'react';
 import { StyleSheet, View, Image, Pressable } from 'react-native';
-import { PText } from '.';
+import { PokemonTags, PText } from '.';
 import { PokemonData } from '../types';
 
 // Props
@@ -22,26 +22,20 @@ export default class PokemonCard extends Component<Props> {
         onPress={() => this.props.onPress(this.props.data)}
         style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
       >
-        <PText style={styles.cardID}>{`#${id}`}</PText>
+        <PText style={styles.id}>{`#${id}`}</PText>
         <Image
-          style={styles.cardImage}
+          style={styles.image}
           source={{
             uri: image,
             width: 150,
             height: 150,
           }}
         />
-        <PText style={styles.cardTitle}>{name.toUpperCase()}</PText>
-        <View style={styles.cardTypes}>
-          {types.map((type) => (
-            <View
-              key={type}
-              style={styles.cardTypeItem}
-            >
-              <PText style={styles.cardTypeText}>{type.toUpperCase()}</PText>
-            </View>
-          ))}
-        </View>
+        <PText style={styles.title}>{name.toUpperCase()}</PText>
+        <PokemonTags
+          data={types}
+          isCompact
+        />
       </Pressable>
     );
   }
@@ -60,7 +54,9 @@ const styles = StyleSheet.create({
   cardPressed: {
     backgroundColor: 'rgba(255,255,255,0.15)',
   },
-  cardID: {
+
+  /* Elements */
+  id: {
     fontSize: 14,
     backgroundColor: 'rgba(255,255,255,0.1)',
     display: 'flex',
@@ -70,30 +66,15 @@ const styles = StyleSheet.create({
     padding: 8,
     borderRadius: 8,
   },
-  cardImage: {
+  image: {
     display: 'flex',
     flex: 1,
     margin: 8,
     width: 'auto',
     resizeMode: 'contain',
   },
-  cardTitle: {
+  title: {
     fontWeight: 'bold',
-  },
-  cardTypes: {
-    display: 'flex',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-    paddingVertical: 8,
-  },
-  cardTypeItem: {
-    backgroundColor: 'rgba(255,255,255,0.1)',
-    paddingVertical: 4,
-    paddingHorizontal: 16,
-    borderRadius: 100,
-  },
-  cardTypeText: {
-    fontSize: 12,
+    paddingBottom: 16,
   },
 });

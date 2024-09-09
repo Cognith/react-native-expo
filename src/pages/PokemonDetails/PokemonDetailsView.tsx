@@ -1,4 +1,4 @@
-import { PText } from '../../components';
+import { DetailCards, PokemonTags, PText } from '../../components';
 import PokemonDetailsController from './PokemonDetailsController';
 import {
   Image,
@@ -10,46 +10,53 @@ import {
 
 export default class PokemonDetailsView extends PokemonDetailsController {
   render() {
-    const pokemon = this.getPokemonData();
+    const { id, name, height, weight, image, stats, abilities, types } =
+      this.getPokemonData();
 
     return (
       <SafeAreaView style={styles.base}>
         <ScrollView style={styles.page}>
-          <PText style={styles.pokemonID}>{`#${pokemon.id}`}</PText>
+          <PText style={styles.id}>{`#${id}`}</PText>
           <Image
-            style={styles.pokemonImage}
+            style={styles.image}
             source={{
-              uri: pokemon.image,
+              uri: image,
               width: 250,
               height: 250,
             }}
           />
 
           {/* Details */}
-          <PText style={styles.pokemonTitle}>
-            {pokemon.name.toUpperCase()}
-          </PText>
-          <View style={{}}>
+          <PText style={styles.title}>{name.toUpperCase()}</PText>
+          <View style={styles.dataBox}>
             {/* Types */}
-            <PText style={{}}>Pokemon Type</PText>
-            <View style={styles.pokemonTypes}>
-              {pokemon.types.map((type) => (
-                <View
-                  key={type}
-                  style={styles.pokemonTypeItem}
-                >
-                  <PText style={styles.pokemonTypeText}>
-                    {type.toUpperCase()}
-                  </PText>
-                </View>
-              ))}
-            </View>
+            <PokemonTags
+              title="Pokemon Type"
+              data={types}
+            />
 
             {/* Stats */}
-            <View style={{}}></View>
+            <DetailCards data={stats} />
 
             {/* Abilities */}
-            <View style={{}}></View>
+            <DetailCards
+              data={[
+                {
+                  key: 'height',
+                  value: height + 'm',
+                },
+                {
+                  key: 'weight',
+                  value: weight + 'kg',
+                },
+              ]}
+            />
+
+            {/* Types */}
+            <PokemonTags
+              title="Abilities"
+              data={abilities}
+            />
           </View>
         </ScrollView>
       </SafeAreaView>
@@ -71,8 +78,7 @@ const styles = StyleSheet.create({
   },
 
   /* Elements */
-
-  pokemonID: {
+  id: {
     fontSize: 14,
     backgroundColor: 'rgba(255,255,255,0.1)',
     display: 'flex',
@@ -82,47 +88,24 @@ const styles = StyleSheet.create({
     padding: 8,
     borderRadius: 8,
   },
-
-  pokemonImage: {
+  image: {
     display: 'flex',
     flex: 1,
     margin: 8,
     width: 'auto',
     resizeMode: 'contain',
   },
-
-  pokemonTitle: {
+  title: {
     fontWeight: 'bold',
+    fontSize: 24,
+    textAlign: 'center',
   },
-
-  pokemonTypes: {
-    display: 'flex',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-    paddingVertical: 8,
-  },
-  pokemonTypeItem: {
+  dataBox: {
     backgroundColor: 'rgba(255,255,255,0.1)',
-    paddingVertical: 4,
-    paddingHorizontal: 16,
-    borderRadius: 100,
-  },
-  pokemonTypeText: {
-    fontSize: 12,
-  },
-
-  pokemonDetails: {
-    fontSize: 12,
-  },
-  pokemonDetailsItem: {
-    fontSize: 12,
-  },
-
-  pokemonAbilities: {
-    fontSize: 12,
-  },
-  pokemonAbilityItem: {
-    fontSize: 12,
+    display: 'flex',
+    gap: 24,
+    marginVertical: 24,
+    padding: 24,
+    borderRadius: 16,
   },
 });
