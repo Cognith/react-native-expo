@@ -1,11 +1,12 @@
 import { Component } from 'react';
-import { StyleSheet, View, Image } from 'react-native';
+import { StyleSheet, View, Image, Pressable } from 'react-native';
 import { PText } from '.';
 import { PokemonData } from '../types';
 
 // Props
 interface Props {
   data: PokemonData;
+  onPress: (data: PokemonData) => void;
 }
 
 class PokemonCard extends Component<Props> {
@@ -17,7 +18,10 @@ class PokemonCard extends Component<Props> {
     const { id, name, image, types } = this.props.data;
 
     return (
-      <View style={styles.card}>
+      <Pressable
+        onPress={() => this.props.onPress(this.props.data)}
+        style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
+      >
         <PText style={styles.cardID}>{`#${id}`}</PText>
         <Image
           style={styles.cardImage}
@@ -38,7 +42,7 @@ class PokemonCard extends Component<Props> {
             </View>
           ))}
         </View>
-      </View>
+      </Pressable>
     );
   }
 }
@@ -52,6 +56,9 @@ const styles = StyleSheet.create({
     padding: 16,
     height: 300,
     borderRadius: 16,
+  },
+  cardPressed: {
+    backgroundColor: '#444444',
   },
   cardID: {
     fontSize: 14,

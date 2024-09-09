@@ -33,7 +33,14 @@ export default class PokemonsListView extends PokemonsListController {
               <FlatList
                 keyExtractor={({ id }) => id.toString()}
                 data={pokemons}
-                renderItem={({ item }) => <PokemonCard data={item} />}
+                renderItem={({ item }) => (
+                  <PokemonCard
+                    data={item}
+                    onPress={() => {
+                      console.log('TEST');
+                    }}
+                  />
+                )}
                 numColumns={2}
               />
             );
