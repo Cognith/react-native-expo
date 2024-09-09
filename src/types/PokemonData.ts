@@ -1,13 +1,12 @@
+import { KeyValue } from ".";
+
 export interface PokemonData {
   id: string;
   name: string;
   height: number;
   weight: number;
   image: string;
-  stats: {
-    title: string,
-    value: number,
-  }[];
+  stats: KeyValue[];
   abilities: string[];
   types: string[];
 }

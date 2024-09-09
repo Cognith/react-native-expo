@@ -1,7 +1,6 @@
 import { Component } from 'react';
-import { Navigation, PokemonData, RootStackParamList } from '../../types';
+import { Navigation, PokemonData } from '../../types';
 import PokemonService from '../../services/PokemonService';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 // Props
 interface Props extends Navigation<'Home'> {}

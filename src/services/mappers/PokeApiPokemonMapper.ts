@@ -10,7 +10,7 @@ export class PokeApiPokemonMapper implements PokemonDataMapper {
       weight: data.weight,
       image: data.sprites.other["official-artwork"].front_default,
       stats: data.stats.map(stat => ({
-        title: stat.stat.name,
+        key: stat.stat.name,
         value: stat.base_stat,
       })),
       abilities: data.abilities.map(ability => ability.ability.name),
