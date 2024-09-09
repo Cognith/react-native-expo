@@ -14,6 +14,7 @@ interface State {
   isLoading: boolean;
   error: null | string;
   search: string;
+  next: string | null; // Determine if more data is available
 }
 
 export default class PokemonsListController extends Component<Props, State> {
@@ -27,6 +28,7 @@ export default class PokemonsListController extends Component<Props, State> {
       isLoading: false,
       error: null,
       search: '',
+      next: null,
     };
 
     this.debounceSearch = debounce(this.handleSearch, 300);
@@ -41,7 +43,10 @@ export default class PokemonsListController extends Component<Props, State> {
 
   // Fetch list of Pokemons
   fetchPokemons = async () => {
-    const { limit, offset } = this.state;
+    const { limit, offset, next } = this.state;
+
+    // Stop fetching if next is null (no more pages to load)
+    if (next === null && offset !== 0) return;
 
     try {
       this.setState({ isLoading: true });
@@ -67,6 +72,7 @@ export default class PokemonsListController extends Component<Props, State> {
       this.setState((prevState) => ({
         pokemons: [...prevState.pokemons, ...filteredPokemons],
         offset: prevState.offset + limit,
+        next: pokemonsList.next,
         isLoading: false,
       }));
     } catch (error) {
@@ -78,7 +84,7 @@ export default class PokemonsListController extends Component<Props, State> {
   };
 
   fetchMorePokemon = () => {
-    if (!this.state.isLoading) {
+    if (!this.state.isLoading && this.state.next !== null) {
       this.fetchPokemons();
     }
   };
