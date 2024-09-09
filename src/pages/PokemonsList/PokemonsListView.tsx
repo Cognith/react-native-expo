@@ -62,6 +62,11 @@ export default class PokemonsListView extends PokemonsListController {
                     <PText style={styles.loadMore}>LOADING...</PText>
                   ) : null
                 }
+                ListEmptyComponent={() => (
+                  <View style={styles.empty}>
+                    <PText>No Pokemon is found</PText>
+                  </View>
+                )}
               />
             );
           })()}
@@ -87,6 +92,9 @@ const styles = StyleSheet.create({
     margin: 'auto',
   },
   error: {
+    margin: 'auto',
+  },
+  empty: {
     margin: 'auto',
   },
 
