@@ -96,8 +96,10 @@ export default class PokemonsListController extends Component<Props, State> {
   filteredPokemonList = () => {
     const { search, pokemons } = this.state;
 
-    return pokemons.filter((pokemon) =>
-      pokemon.name.toLowerCase().includes(search.toLowerCase()),
+    return pokemons.filter(
+      (pokemon) =>
+        pokemon.name.toLowerCase().includes(search.toLowerCase()) ||
+        pokemon.id.toString().includes(search),
     );
   };
 }
