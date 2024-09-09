@@ -4,6 +4,7 @@ import {
   StyleSheet,
   FlatList,
   Platform,
+  ActivityIndicator,
 } from "react-native";
 import ComponentController from "./ComponentController";
 import { PokemonCard, SearchBar } from "../../components";
@@ -31,6 +32,14 @@ export default class HomePage extends ComponentController {
                 onPress={() => this.navigateToDetail(item)}
               />
             )}
+            ListFooterComponent={() => {
+              const { isLoading } = this.state;
+              if (isLoading) return <ActivityIndicator size="large" />;
+              return null;
+            }}
+            onEndReachedThreshold={0.5}
+            onEndReached={this.onEndReached}
+            onScrollBeginDrag={this.onScrollBeginDrag}
             contentContainerStyle={styles.contentContainerStyle}
             columnWrapperStyle={styles.columnWrapperStyle}
           />

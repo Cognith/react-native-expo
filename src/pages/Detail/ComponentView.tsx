@@ -22,7 +22,7 @@ export default class DetailPage extends ComponentController {
           ])}
         >
           <SearchBar />
-          <View style={{ paddingHorizontal: 20, paddingVertical: 10 }}>
+          <View style={styles.contentContainer}>
             <View style={styles.idBadgeContainer}>
               <IdBadge
                 type={pokemon?.types[0]?.name}
@@ -37,29 +37,16 @@ export default class DetailPage extends ComponentController {
             />
             <Text style={styles.nameText}>{pokemon?.name}</Text>
             <View style={styles.descriptionBox}>
-              <Text
-                style={{
-                  color: "#ECDFCC",
-                  textAlign: "center",
-                  fontSize: 16,
-                  fontStyle: "italic",
-                  fontWeight: "500",
-                  marginBottom: 20,
-                }}
-              >
+              <Text style={styles.descriptionText}>
                 "Lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem
                 ipsum dolor sit amet"
               </Text>
-              <Text
-                style={{ color: "white", fontWeight: "bold", marginBottom: 5 }}
-              >
-                Pokemon Type
-              </Text>
-              <View style={{ flexDirection: "row", marginBottom: 15 }}>
+              <Text style={styles.typeText}>Pokemon Type</Text>
+              <View style={styles.typeContainer}>
                 {pokemon?.types.map((type, index) => (
                   <View
                     key={`${type.name}-${index}`}
-                    style={{ marginRight: 6 }}
+                    style={styles.typeBadgeWrapper}
                   >
                     <TypeBadge type={type.name} />
                   </View>
@@ -73,9 +60,9 @@ export default class DetailPage extends ComponentController {
                   columnWrapperStyle={styles.columnWrapperStyle}
                   keyExtractor={(item) => item.name}
                   renderItem={({ item }) => (
-                    <View style={{ flex: 1 }}>
-                      <Text style={{ color: "#ECDFCC" }}>{item.name}</Text>
-                      <Text style={{ color: "white", fontWeight: "600" }}>
+                    <View style={styles.statWrapper}>
+                      <Text style={styles.statNameText}>{item.name}</Text>
+                      <Text style={styles.statBaseStatText}>
                         {item.baseStat}
                       </Text>
                     </View>
@@ -98,6 +85,7 @@ const styles = StyleSheet.create({
   paddingContainer: {
     paddingHorizontal: 20,
   },
+  contentContainer: { paddingHorizontal: 20, paddingVertical: 10 },
   idBadgeContainer: { alignSelf: "flex-start" },
   pokemonImage: {
     width: 140,
@@ -108,23 +96,37 @@ const styles = StyleSheet.create({
   },
   nameText: {
     color: "white",
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "bold",
     textTransform: "capitalize",
     textAlign: "center",
-    marginBottom: 5,
+    marginBottom: 10,
   },
   descriptionBox: {
     backgroundColor: "#3C3D37",
     borderRadius: 10,
     padding: 15,
   },
+  descriptionText: {
+    color: "#ECDFCC",
+    textAlign: "center",
+    fontSize: 16,
+    fontStyle: "italic",
+    fontWeight: "500",
+    marginBottom: 20,
+  },
+  typeText: { color: "white", fontWeight: "bold", marginBottom: 5 },
+  typeContainer: { flexDirection: "row", marginBottom: 15 },
+  typeBadgeWrapper: { marginRight: 6 },
   statsBox: {
     padding: 10,
     borderRadius: 10,
     backgroundColor: "#40534C",
   },
+  statWrapper: { flex: 1 },
+  statNameText: { color: "#ECDFCC", marginBottom: 2 },
+  statBaseStatText: { color: "white", fontWeight: "600" },
   columnWrapperStyle: {
-    marginBottom: 10,
+    marginBottom: 14,
   },
 });

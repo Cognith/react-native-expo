@@ -6,7 +6,10 @@ interface Props {
 }
 
 interface S {
+  isLoading: boolean;
   pokemon: Pokemon[];
+  isFlatlistScrolled: boolean;
+  offset: number;
 }
 
 export default class ComponentController extends Component<Props, S> {
@@ -14,7 +17,10 @@ export default class ComponentController extends Component<Props, S> {
     super(props);
 
     this.state = {
+      isLoading: true,
       pokemon: [],
+      isFlatlistScrolled: false,
+      offset: 0,
     };
   }
 
@@ -23,11 +29,14 @@ export default class ComponentController extends Component<Props, S> {
     this.fetchPokemon();
   };
 
-  fetchPokemon = async () => {
+  fetchPokemon = async (offset?: number | 0) => {
+    const { isLoading } = this.state;
     let pokemonArray: Pokemon[] = [];
-    const url = "https://pokeapi.co/api/v2/pokemon?offset=0&limit=20";
+    const url = `https://pokeapi.co/api/v2/pokemon?offset=${offset}&limit=20`;
 
     try {
+      if (!isLoading) this.setState({ isLoading: true });
+
       const response = await fetch(url);
       const json = await response.json();
 
@@ -63,6 +72,7 @@ export default class ComponentController extends Component<Props, S> {
             return newPokemon;
           } catch (error) {
             console.error("Failed to fetch pokemon data:", error);
+            this.setState({ isLoading: false });
             return null;
           }
         });
@@ -73,11 +83,28 @@ export default class ComponentController extends Component<Props, S> {
         );
 
         this.setState({
-          pokemon: pokemonArray,
+          isLoading: false,
+          pokemon: [...this.state.pokemon, ...pokemonArray],
         });
       }
     } catch (error: any) {
+      this.setState({ isLoading: false });
       console.error(error.message);
+    }
+  };
+
+  onScrollBeginDrag = () => {
+    const { isFlatlistScrolled } = this.state;
+    if (!isFlatlistScrolled) {
+      this.setState({ isFlatlistScrolled: true });
+    }
+  };
+
+  onEndReached = () => {
+    const { offset, isFlatlistScrolled } = this.state;
+    if (isFlatlistScrolled) {
+      this.fetchPokemon(offset + 20);
+      this.setState({ offset: this.state.offset + 20 });
     }
   };
 

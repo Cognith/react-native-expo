@@ -9,8 +9,6 @@ interface Props {
 
 export class IdBadge extends Component<Props> {
   render() {
-    console.log("[d] IdBadge");
-    console.log("[d] IdBadge");
     const { formattedId, type } = this.props;
     const typeDetail = POKEMON_TYPES.find((element) => element.name === type);
     return (
