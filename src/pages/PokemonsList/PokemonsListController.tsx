@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import { Navigation, PokemonData } from '../../types';
 import PokemonService from '../../services/PokemonService';
+import { debounce } from '../../utils/debounce';
 
 // Props
 interface Props extends Navigation<'Home'> {}
@@ -27,7 +28,12 @@ export default class PokemonsListController extends Component<Props, State> {
       error: null,
       search: '',
     };
+
+    this.debounceSearch = debounce(this.handleSearch, 300);
   }
+
+  // Debounced search handler
+  debounceSearch: (text: string) => void;
 
   componentDidMount = async () => {
     this.fetchPokemons();
