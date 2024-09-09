@@ -5,8 +5,10 @@ import {
   SafeAreaView,
   ScrollView,
   StyleSheet,
+  TouchableOpacity,
   View,
 } from 'react-native';
+import Entypo from '@expo/vector-icons/Entypo';
 
 export default class PokemonDetailsView extends PokemonDetailsController {
   render() {
@@ -16,7 +18,19 @@ export default class PokemonDetailsView extends PokemonDetailsController {
     return (
       <SafeAreaView style={styles.base}>
         <ScrollView style={styles.page}>
-          <PText style={styles.id}>{`#${id}`}</PText>
+          <View style={styles.header}>
+            <TouchableOpacity
+              onPress={() => this.props.navigation.pop()}
+              activeOpacity={0.7}
+            >
+              <Entypo
+                name="home"
+                size={28}
+                color="white"
+              />
+            </TouchableOpacity>
+            <PText style={styles.id}>{`#${id}`}</PText>
+          </View>
           <Image
             style={styles.image}
             source={{
@@ -78,6 +92,12 @@ const styles = StyleSheet.create({
   },
 
   /* Elements */
+  header: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignContent: 'center',
+  },
   id: {
     fontSize: 14,
     backgroundColor: 'rgba(255,255,255,0.1)',
