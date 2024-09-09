@@ -1,3 +1,4 @@
-import PText from "./PText";
+import PText from './PText';
+import PokemonCard from './PokemonCard';
 
-export { PText };
+export { PText, PokemonCard };
