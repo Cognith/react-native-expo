@@ -9,7 +9,7 @@ interface Props {
   onPress: (data: PokemonData) => void;
 }
 
-class PokemonCard extends Component<Props> {
+export default class PokemonCard extends Component<Props> {
   constructor(props: Props) {
     super(props);
   }
@@ -49,7 +49,7 @@ class PokemonCard extends Component<Props> {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#222222',
+    backgroundColor: 'rgba(255,255,255,0.05)',
     display: 'flex',
     flex: 1,
     margin: 8,
@@ -58,11 +58,11 @@ const styles = StyleSheet.create({
     borderRadius: 16,
   },
   cardPressed: {
-    backgroundColor: '#444444',
+    backgroundColor: 'rgba(255,255,255,0.15)',
   },
   cardID: {
     fontSize: 14,
-    backgroundColor: '#333333',
+    backgroundColor: 'rgba(255,255,255,0.1)',
     display: 'flex',
     flexGrow: 0,
     flexShrink: 1,
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   cardTypeItem: {
-    backgroundColor: '#333333',
+    backgroundColor: 'rgba(255,255,255,0.1)',
     paddingVertical: 4,
     paddingHorizontal: 16,
     borderRadius: 100,
@@ -97,5 +97,3 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
 });
-
-export default PokemonCard;

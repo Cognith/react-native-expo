@@ -4,7 +4,7 @@ import PokemonService from '../../services/PokemonService';
 
 // Props
 interface Props {
-  navigation: Navigation["navigation"];
+  navigation: Navigation['navigation'];
 }
 
 // State
@@ -44,12 +44,12 @@ export default class PokemonsListController extends Component<Props, State> {
 
       // Fetch details for each Pokemon
       const pokemonsListWithDetails = await Promise.all(
-        pokemonsList.results.map(pokemon => (
-          PokemonService.getPokemonDetails(pokemon.url)
-        )),
+        pokemonsList.results.map((pokemon) =>
+          PokemonService.getPokemonDetails(pokemon.url),
+        ),
       );
 
-      this.setState(prevState => ({
+      this.setState((prevState) => ({
         pokemons: [...prevState.pokemons, ...pokemonsListWithDetails],
         offset: prevState.offset + limit,
         isLoading: false,

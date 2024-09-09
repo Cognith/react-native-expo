@@ -1,22 +1,16 @@
 import { Component } from 'react';
-import { Navigation } from '../../types';
+import { Navigation, PokemonData } from '../../types';
 
 // Props
 interface Props {
-  navigation: Navigation["navigation"];
+  navigation: Navigation['navigation'];
+  route: Navigation<{ Details: { data: PokemonData } }>['route'];
 }
 
-// State
-interface State { }
-
-export default class PokemonDetailsController extends Component<Props, State> {
+export default class PokemonDetailsController extends Component<Props> {
   constructor(props: Props) {
     super(props);
-
-    this.state = {};
   }
 
-  componentDidMount = async () => {
-    console.log('PokemonDetails Mount');
-  };
+  getPokemonData = () => this.props.route.params.data;
 }

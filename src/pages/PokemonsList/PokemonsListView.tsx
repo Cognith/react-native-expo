@@ -37,7 +37,7 @@ export default class PokemonsListView extends PokemonsListController {
                   <PokemonCard
                     data={item}
                     onPress={() => {
-                      console.log('TEST');
+                      this.props.navigation.navigate('Details', { data: item });
                     }}
                   />
                 )}
