@@ -33,9 +33,10 @@ export default function RootLayout() {
             const CurrentComponent = Current.component;
             return (
               <Stack.Screen
+                key={index}
                 name={Current.path}
                 component={CurrentComponent}
-                key={index}
+                initialParams={Current.params}
               />
             );
           })}

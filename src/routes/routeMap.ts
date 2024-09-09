@@ -1,9 +1,11 @@
 import { ComponentType } from "react";
 import { PokemonDetailsView, PokemonsListView } from "../pages";
+import { PokemonData } from "../types";
 
 interface RouteType {
   component: ComponentType<any>;
   path: string;
+  params?: any;
 }
 
 const routeMap: Array<RouteType> = [
@@ -14,6 +16,7 @@ const routeMap: Array<RouteType> = [
   {
     component: PokemonDetailsView,
     path: 'Details',
+    params: { data: {} as PokemonData }
   },
 ];
 
