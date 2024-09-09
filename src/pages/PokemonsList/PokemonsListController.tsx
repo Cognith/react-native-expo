@@ -12,6 +12,7 @@ interface State {
   offset: number;
   isLoading: boolean;
   error: null | string;
+  search: string;
 }
 
 export default class PokemonsListController extends Component<Props, State> {
@@ -24,6 +25,7 @@ export default class PokemonsListController extends Component<Props, State> {
       offset: 0,
       isLoading: false,
       error: null,
+      search: '',
     };
   }
 
@@ -73,5 +75,17 @@ export default class PokemonsListController extends Component<Props, State> {
     if (!this.state.isLoading) {
       this.fetchPokemons();
     }
+  };
+
+  handleSearch = (text: string) => {
+    this.setState({ search: text });
+  };
+
+  filteredPokemonList = () => {
+    const { search, pokemons } = this.state;
+
+    return pokemons.filter((pokemon) =>
+      pokemon.name.toLowerCase().includes(search.toLowerCase()),
+    );
   };
 }

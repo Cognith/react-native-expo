@@ -2,6 +2,7 @@ import { Dimensions, FlatList, StyleSheet, View } from 'react-native';
 import PokemonsListController from './PokemonsListController';
 import { ActivityIndicator, SafeAreaView } from 'react-native';
 import { PokemonCard, PText } from '../../components';
+import { TextInput } from 'react-native-paper';
 
 export default class PokemonsListView extends PokemonsListController {
   render() {
@@ -11,6 +12,16 @@ export default class PokemonsListView extends PokemonsListController {
     return (
       <SafeAreaView style={styles.base}>
         <View style={[styles.page, { height: height }]}>
+          <TextInput
+            style={styles.searchBar}
+            placeholder="Search Pokemon..."
+            value={this.state.search}
+            onChangeText={(text) => this.handleSearch(text)}
+            textColor="#FFFFFF"
+            placeholderTextColor="#FFFFFF73"
+            activeUnderlineColor="#FFFFFF73"
+          />
+
           {(() => {
             if (isLoading && !pokemons.length) {
               return (
@@ -32,9 +43,10 @@ export default class PokemonsListView extends PokemonsListController {
 
             return (
               <FlatList
+                style={styles.list}
                 keyExtractor={({ id }) => id.toString()}
                 numColumns={2}
-                data={pokemons}
+                data={this.filteredPokemonList()}
                 renderItem={({ item }) => (
                   <PokemonCard
                     data={item}
@@ -67,7 +79,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   page: {
-    padding: 24,
+    // padding: 24,
   },
 
   /* States */
@@ -79,6 +91,13 @@ const styles = StyleSheet.create({
   },
 
   /* Elements */
+  searchBar: {
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    margin: 24,
+  },
+  list: {
+    padding: 24,
+  },
   loadMore: {
     textAlign: 'center',
     width: '100%',

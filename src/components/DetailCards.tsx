@@ -17,7 +17,10 @@ export default class DetailCards extends Component<Props> {
     return (
       <View style={styles.box}>
         {this.props.data.map(({ key, value }) => (
-          <View style={styles.data}>
+          <View
+            key={key}
+            style={styles.data}
+          >
             <PText style={{}}>{key.replace('-', ' ').toUpperCase()}</PText>
             <PText style={{}}>{value}</PText>
           </View>
