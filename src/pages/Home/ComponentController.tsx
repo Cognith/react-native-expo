@@ -1,5 +1,5 @@
 import { Component } from "react";
-import { Navigation, Pokemon, PokemonType } from "../../types";
+import { Navigation, Pokemon, PokemonStat, PokemonType } from "../../types";
 
 interface Props {
   navigation: Navigation["navigation"];
@@ -42,6 +42,14 @@ export default class ComponentController extends Component<Props, S> {
               pokemonTypes.push({ name: item.type.name });
             });
 
+            let pokemonStats: PokemonStat[] = [];
+            pokemon.stats.map((item: any) => {
+              pokemonStats.push({
+                name: item.stat.name,
+                baseStat: item.base_stat,
+              });
+            });
+
             const newPokemon: Pokemon = {
               id: pokemon.id,
               formattedId: pokemon.id.toString().padStart(4, "0"),
@@ -49,6 +57,7 @@ export default class ComponentController extends Component<Props, S> {
               url: pokemon.species.url,
               image: pokemon.sprites.front_shiny,
               types: pokemonTypes,
+              stats: pokemonStats,
             };
 
             return newPokemon;
@@ -72,8 +81,8 @@ export default class ComponentController extends Component<Props, S> {
     }
   };
 
-  navigateToDetail = () => {
+  navigateToDetail = (pokemon: Pokemon) => {
     const { navigation } = this.props;
-    navigation.navigate("Detail");
+    navigation.navigate("Detail", { pokemon });
   };
 }

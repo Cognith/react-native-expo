@@ -1,7 +1,12 @@
-import { NavigationProp, ParamListBase } from "@react-navigation/native";
+import {
+  NavigationProp,
+  ParamListBase,
+  RouteProp,
+} from "@react-navigation/native";
 
 export interface Navigation {
   navigation: NavigationProp<ParamListBase>;
+  route: RouteProp<{ params: { pokemon: Pokemon } }, "params">;
 }
 
 export interface Pokemon {
@@ -10,9 +15,15 @@ export interface Pokemon {
   name: string;
   url: string;
   image: string;
-  types: PokemonType[];
+  types: PokemonType[] | [];
+  stats: PokemonStat[] | [];
 }
 
 export interface PokemonType {
+  name: string | "";
+}
+
+export interface PokemonStat {
   name: string;
+  baseStat: number;
 }

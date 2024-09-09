@@ -1,3 +1,7 @@
+import { Dimensions } from "react-native";
+
+export const SCREEN_WIDTH = Dimensions.get("window").width;
+
 export const POKEMON_TYPES = [
   { name: "bug", color: "#87A922" },
   { name: "fire", color: "#FF8A08" },

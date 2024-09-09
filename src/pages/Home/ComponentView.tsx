@@ -1,13 +1,12 @@
 import {
   View,
-  TextInput,
   SafeAreaView,
   StyleSheet,
   FlatList,
   Platform,
 } from "react-native";
 import ComponentController from "./ComponentController";
-import { PokemonCard } from "../../components";
+import { PokemonCard, SearchBar } from "../../components";
 
 export default class HomePage extends ComponentController {
   render() {
@@ -20,17 +19,18 @@ export default class HomePage extends ComponentController {
             { paddingVertical: Platform.OS === "android" ? 30 : 0 },
           ])}
         >
-          <TextInput
-            placeholder="Search your pokemon here"
-            placeholderTextColor="#ECDFCC"
-            style={styles.searchBarContainer}
-          />
+          <SearchBar />
           <FlatList
             data={pokemon}
             numColumns={2}
             showsVerticalScrollIndicator={false}
             keyExtractor={(item) => item.name}
-            renderItem={({ item }) => <PokemonCard item={item} />}
+            renderItem={({ item }) => (
+              <PokemonCard
+                item={item}
+                onPress={() => this.navigateToDetail(item)}
+              />
+            )}
             contentContainerStyle={styles.contentContainerStyle}
             columnWrapperStyle={styles.columnWrapperStyle}
           />
@@ -47,14 +47,6 @@ const styles = StyleSheet.create({
   },
   paddingContainer: {
     paddingHorizontal: 20,
-  },
-  searchBarContainer: {
-    color: "#ECDFCC",
-    backgroundColor: "#3C3D37",
-    paddingHorizontal: 10,
-    borderRadius: 5,
-    marginBottom: 15,
-    minHeight: 40,
   },
   columnWrapperStyle: {
     justifyContent: "space-between",

@@ -1,9 +1,9 @@
 import { Component } from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { POKEMON_TYPES } from "../../constanst";
+import { SCREEN_WIDTH, POKEMON_TYPES } from "../../constanst";
 
 interface Props {
-  type: string;
+  type: string | undefined;
 }
 
 class TypeBadge extends Component<Props> {
@@ -27,16 +27,16 @@ export default TypeBadge;
 
 const styles = StyleSheet.create({
   container: {
-    width: "48%",
+    width: SCREEN_WIDTH * 0.18,
+    height: 20,
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 10,
     paddingVertical: 2,
-    marginRight: 4,
-    flexShrink: 1,
   },
   text: {
     fontSize: 10,
+    fontWeight: "600",
     color: "white",
     textTransform: "uppercase",
   },
