@@ -14,6 +14,14 @@ interface PokemonSpriteModel {
   back_shiny: string,
   front_default: string,
   front_shiny: string,
+  other: {
+    home: {
+      front_default: string,
+    },
+    'official-artwork': {
+      front_default: string,
+    },
+  },
 }
 
 interface PokemonStatModel {

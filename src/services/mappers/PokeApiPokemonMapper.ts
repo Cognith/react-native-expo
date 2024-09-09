@@ -4,11 +4,11 @@ import { PokemonModel } from "../models";
 export class PokeApiPokemonMapper implements PokemonDataMapper {
   map(data: PokemonModel): PokemonData {
     return {
-      id: data.id,
+      id: data.id.toString().padStart(4, '0'),
       name: data.name,
       height: data.height,
       weight: data.weight,
-      image: data.sprites.front_default,
+      image: data.sprites.other["official-artwork"].front_default,
       stats: data.stats.map(stat => ({
         title: stat.stat.name,
         value: stat.base_stat,
