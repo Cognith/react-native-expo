@@ -1,5 +1,6 @@
 import {
   View,
+  Text,
   SafeAreaView,
   StyleSheet,
   FlatList,
@@ -20,7 +21,7 @@ export default class HomePage extends ComponentController {
             { paddingVertical: Platform.OS === "android" ? 30 : 0 },
           ])}
         >
-          <SearchBar />
+          <SearchBar onChangeText={this.onChangeText} />
           <FlatList
             data={pokemon}
             numColumns={2}
@@ -35,6 +36,14 @@ export default class HomePage extends ComponentController {
             ListFooterComponent={() => {
               const { isLoading } = this.state;
               if (isLoading) return <ActivityIndicator size="large" />;
+              return null;
+            }}
+            ListEmptyComponent={() => {
+              const { isLoading } = this.state;
+              if (!isLoading)
+                return (
+                  <Text style={styles.emptyDataText}>Pokemon not found</Text>
+                );
               return null;
             }}
             onEndReachedThreshold={0.5}
@@ -57,6 +66,7 @@ const styles = StyleSheet.create({
   paddingContainer: {
     paddingHorizontal: 20,
   },
+  emptyDataText: { color: "#ECDFCC", alignSelf: "center" },
   columnWrapperStyle: {
     justifyContent: "space-between",
     marginBottom: 12,

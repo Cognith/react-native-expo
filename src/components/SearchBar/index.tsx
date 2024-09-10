@@ -1,13 +1,17 @@
 import { TextInput, StyleSheet } from "react-native";
 import { Component } from "react";
 
-export class SearchBar extends Component {
+interface Props {
+  onChangeText: (text: string) => void;
+}
+export class SearchBar extends Component<Props> {
   render() {
     return (
       <TextInput
         placeholder="Search your pokemon here"
         placeholderTextColor="#ECDFCC"
         style={styles.textInput}
+        onChangeText={this.props.onChangeText}
       />
     );
   }
