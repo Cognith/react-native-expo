@@ -21,8 +21,10 @@ export default class DetailCards extends Component<Props> {
             key={key}
             style={styles.data}
           >
-            <PText style={{}}>{key.replace('-', ' ').toUpperCase()}</PText>
-            <PText style={{}}>{value}</PText>
+            <PText style={styles.dataTitle}>
+              {key.replace('-', ' ').toUpperCase()}
+            </PText>
+            <PText>{value}</PText>
           </View>
         ))}
       </View>
@@ -46,5 +48,9 @@ const styles = StyleSheet.create({
     gap: 4,
     width: '48%',
     paddingBottom: 24,
+    fontSize: 14,
+  },
+  dataTitle: {
+    fontSize: 12,
   },
 });

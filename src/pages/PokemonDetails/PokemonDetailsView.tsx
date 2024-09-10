@@ -8,7 +8,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import Entypo from '@expo/vector-icons/Entypo';
 
 export default class PokemonDetailsView extends PokemonDetailsController {
   render() {
@@ -26,11 +25,7 @@ export default class PokemonDetailsView extends PokemonDetailsController {
               onPress={() => this.props.navigation.pop()}
               activeOpacity={0.7}
             >
-              <Entypo
-                name="home"
-                size={28}
-                color="white"
-              />
+              <PText style={styles.backButton}>←</PText>
             </TouchableOpacity>
             <PText style={styles.id}>{`#${id}`}</PText>
           </View>
@@ -100,6 +95,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignContent: 'center',
+  },
+  backButton: {
+    color: '#ffffff',
+    fontSize: 32,
   },
   id: {
     fontSize: 14,

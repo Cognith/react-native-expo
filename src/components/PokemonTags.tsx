@@ -31,11 +31,9 @@ export default class PokemonTags extends Component<Props> {
               style={styles.item}
             >
               <PText
-                style={
-                  isCompact && {
-                    fontSize: 12,
-                  }
-                }
+                style={{
+                  fontSize: isCompact ? 12 : 14,
+                }}
               >
                 {type.toUpperCase()}
               </PText>
