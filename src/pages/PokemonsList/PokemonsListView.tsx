@@ -43,6 +43,7 @@ export default class PokemonsListView extends PokemonsListController {
 
             return (
               <FlatList
+                data-test-id="pokemon-list"
                 style={styles.list}
                 keyExtractor={({ id }) => id.toString()}
                 numColumns={2}

@@ -17,7 +17,10 @@ export default class PokemonDetailsView extends PokemonDetailsController {
 
     return (
       <SafeAreaView style={styles.base}>
-        <ScrollView style={styles.page}>
+        <ScrollView
+          data-test-id="pokemon-details"
+          style={styles.page}
+        >
           <View style={styles.header}>
             <TouchableOpacity
               onPress={() => this.props.navigation.pop()}

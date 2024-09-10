@@ -66,7 +66,7 @@ export default class PokemonsListController extends Component<Props, State> {
 
       // Filter out failed data.
       const filteredPokemons = pokemonsListWithDetails.filter(
-        (pokemon) => pokemon != null,
+        (pokemon): pokemon is PokemonData => pokemon !== null,
       );
 
       this.setState((prevState) => ({

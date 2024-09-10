@@ -1,15 +1,18 @@
-import { shallow, ShallowWrapper } from "enzyme";
-import { defineFeature, loadFeature } from "jest-cucumber";
-import PokemonsListView from "../../PokemonsListView";
+import { shallow, ShallowWrapper } from 'enzyme';
+import { defineFeature, loadFeature } from 'jest-cucumber';
+import PokemonsListView from '../../PokemonsListView';
 
 const props = {
   navigation: {
     navigate: jest.fn(),
   } as any,
+  route: {
+    params: {},
+  } as any,
 };
 
 const feature = loadFeature(
-  "./src/pages/PokemonsList/__tests__/features/PokemonsListView.feature"
+  './src/pages/PokemonsList/__tests__/features/PokemonsListView.feature',
 );
 
 defineFeature(feature, (test) => {
@@ -17,21 +20,21 @@ defineFeature(feature, (test) => {
     jest.resetModules();
   });
 
-  test("Render Pokemon List", ({ given, when, then }) => {
+  test('Render Pokemon List', ({ given, when, then }) => {
     let PokemonsListViewWrapper: ShallowWrapper;
     let instance: PokemonsListView;
 
-    given("I am on the Pokemon List Page", () => {
+    given('I am on the Pokemon List Page', () => {
       PokemonsListViewWrapper = shallow(<PokemonsListView {...props} />);
     });
 
-    when("I successfully load Pokemon List Page", async () => {
+    when('I successfully load Pokemon List Page', async () => {
       instance = PokemonsListViewWrapper.instance() as PokemonsListView;
     });
 
-    then("I should see Hello World", () => {
+    then('I should see a list of Pokemon', () => {
       const helloWorldText = PokemonsListViewWrapper.find(
-        '[data-test-id="hello-text"]'
+        '[data-test-id="pokemon-list"]',
       );
 
       expect(helloWorldText).toBeDefined();
