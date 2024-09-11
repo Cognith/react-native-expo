@@ -24,7 +24,7 @@ export default function RootLayout() {
       independent={true}
       children={
         <Stack.Navigator
-          initialRouteName="Home"
+          initialRouteName="PokemonList"
           screenOptions={{
             headerShown: false,
             cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
