@@ -36,7 +36,9 @@ export default class DetailPage extends ComponentController {
               uri: pokemon?.image,
             }}
           />
-          <Text style={styles.nameText}>{pokemon?.name}</Text>
+          <Text style={styles.nameText} testID="pokemon-name-text">
+            {pokemon?.name}
+          </Text>
           <View style={styles.descriptionBox}>
             <Text style={styles.descriptionText}>
               "Lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum

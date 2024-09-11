@@ -66,7 +66,6 @@ export default class ComponentController extends Component<Props, S> {
     try {
       console.log("Fetching Pokemon ...");
       if (!isLoading) this.setState({ isLoading: true });
-
       const pokemonResponse = await fetch(url);
       const pokemonJson = await pokemonResponse.json();
       const newPokemon = pokemonTransformer(pokemonJson);

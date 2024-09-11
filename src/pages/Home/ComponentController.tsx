@@ -10,7 +10,7 @@ interface S {
   isLoading: boolean;
   pokemon: Pokemon[];
   isFlatlistScrolled: boolean;
-  offset: number;
+  offset: number | 0;
   query: string;
   debouncedQuery: string;
 }
@@ -55,25 +55,31 @@ export default class ComponentController extends Component<Props, S> {
 
     if (!isLoading) {
       console.log("Fetching All Pokemon ...");
+      console.log("[d] url", url);
       try {
         if (!isLoading) this.setState({ isLoading: true });
 
         const response = await fetch(url);
-        const json = await response.json();
+        const responseJson = await response.json();
 
-        if (json.results.length > 0) {
-          const pokemonPromises = json.results.map(async (item: any) => {
-            try {
-              const pokemonResponse = await fetch(item.url);
-              const pokemon = await pokemonResponse.json();
-              const newPokemon = pokemonTransformer(pokemon);
-              return newPokemon;
-            } catch (error) {
-              console.error("Failed to fetch pokemon data:", error);
-              this.setState({ isLoading: false });
-              return null;
+        if (responseJson.results.length > 0) {
+          const pokemonPromises = responseJson.results.map(
+            async (item: any) => {
+              try {
+                const pokemonResponse = await fetch(item.url);
+                const pokemon = await pokemonResponse.json();
+                const newPokemon = pokemonTransformer(pokemon);
+                return newPokemon;
+              } catch (error) {
+                console.log(
+                  "[error] Fetching Pokemon inside fetchAllPokemon",
+                  error
+                );
+                this.setState({ isLoading: false });
+                return null;
+              }
             }
-          });
+          );
 
           const resolvedPokemonArray = await Promise.all(pokemonPromises);
           pokemonArray = resolvedPokemonArray.filter(
