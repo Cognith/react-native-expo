@@ -31,7 +31,12 @@ export default class PokemonCard extends Component<Props> {
             height: 150,
           }}
         />
-        <PText style={styles.title}>{name.toUpperCase()}</PText>
+        <PText
+          data-test-id="pokemon-name"
+          style={styles.title}
+        >
+          {name.toUpperCase()}
+        </PText>
         <PokemonTags
           data={types}
           isCompact

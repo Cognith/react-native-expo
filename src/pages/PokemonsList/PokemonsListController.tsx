@@ -25,7 +25,7 @@ export default class PokemonsListController extends Component<Props, State> {
       pokemons: [],
       limit: 20,
       offset: 0,
-      isLoading: false,
+      isLoading: true,
       error: null,
       search: '',
       next: null,

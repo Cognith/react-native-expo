@@ -10,7 +10,10 @@ export default class PokemonsListView extends PokemonsListController {
     const { height } = Dimensions.get('window');
 
     return (
-      <SafeAreaView style={styles.base}>
+      <SafeAreaView
+        data-test-id="list-page"
+        style={styles.base}
+      >
         <View style={[styles.page, { height: height }]}>
           <TextInput
             style={styles.searchBar}
@@ -26,6 +29,7 @@ export default class PokemonsListView extends PokemonsListController {
             if (isLoading && !pokemons.length) {
               return (
                 <ActivityIndicator
+                  data-test-id="loading-indicator"
                   style={styles.loader}
                   size={200}
                   color="#444444"
@@ -35,7 +39,10 @@ export default class PokemonsListView extends PokemonsListController {
 
             if (error) {
               return (
-                <View style={styles.error}>
+                <View
+                  data-test-id="error-indicator"
+                  style={styles.error}
+                >
                   <PText>Error: {error}</PText>
                 </View>
               );

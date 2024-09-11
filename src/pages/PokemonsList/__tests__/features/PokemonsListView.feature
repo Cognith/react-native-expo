@@ -1,6 +1,7 @@
 Feature: Pokemon List
 
-    Scenario: Render Pokemon List
-        Given I am on the Pokemon List Page
-        When I successfully load Pokemon List Page
-        Then I should see a list of Pokemon
+  Scenario: User navigating to Pokemon List Page
+    Given User on the Pokémon List page
+    When User fully loaded the Pokémon List page
+    Then User should see list page
+    Then User should see loading
