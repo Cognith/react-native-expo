@@ -17,6 +17,9 @@ export const getPokemonList = async ({
   offset = 0,
 }): Promise<getPokemonListData> => {
   try {
+    console.log(
+      `https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`
+    );
     const res = await axios.get(
       `https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`
     );

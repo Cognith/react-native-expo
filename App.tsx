@@ -1,10 +1,10 @@
-import React, { useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import {
   CardStyleInterpolators,
   createStackNavigator,
 } from "@react-navigation/stack";
 import * as SplashScreen from "expo-splash-screen";
+import React, { useEffect } from "react";
 import routeMap from "./src/routes/routeMap";
 
 SplashScreen.preventAutoHideAsync();
