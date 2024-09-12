@@ -37,7 +37,7 @@ defineFeature(feature, (test) => {
 
     then('I should see the details of a Pokemon', () => {
       const pokemonDetails = PokemonDetailsViewWrapper.find(
-        '[data-test-id="pokemon-details"]',
+        '[testID="pokemon-details"]',
       );
 
       expect(pokemonDetails).toBeDefined();

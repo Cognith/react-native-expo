@@ -19,6 +19,7 @@ export default class PokemonCard extends Component<Props> {
 
     return (
       <Pressable
+        testID="pokemon-item"
         onPress={() => this.props.onPress(this.props.data)}
         style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
       >
@@ -32,7 +33,7 @@ export default class PokemonCard extends Component<Props> {
           }}
         />
         <PText
-          data-test-id="pokemon-name"
+          testID="pokemon-name"
           style={styles.title}
         >
           {name.toUpperCase()}

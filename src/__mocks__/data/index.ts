@@ -1,3 +1,3 @@
-import mockPokemonData from "./mockPokemonData";
+import { mockPokemonData, mockPokemonList, } from "./mockPokemonData";
 
-export { mockPokemonData };
+export { mockPokemonData, mockPokemonList };

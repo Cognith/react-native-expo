@@ -1,35 +1,15 @@
 import { PokemonData } from "../../types";
 
-const mockPokemonData: PokemonData = {
+export const mockPokemonData: PokemonData = {
   id: '0001',
   name: 'bulbasaur',
   height: 7,
   weight: 69,
   image:
-    'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png',
+    'https://',
   stats: [
     {
       key: 'hp',
-      value: 45,
-    },
-    {
-      key: 'attack',
-      value: 49,
-    },
-    {
-      key: 'defense',
-      value: 49,
-    },
-    {
-      key: 'special-attack',
-      value: 65,
-    },
-    {
-      key: 'special-defense',
-      value: 65,
-    },
-    {
-      key: 'speed',
       value: 45,
     },
   ],
@@ -37,4 +17,7 @@ const mockPokemonData: PokemonData = {
   types: ['grass', 'poison'],
 };
 
-export default mockPokemonData;
+export const mockPokemonList = Array.from({ length: 20 }, (_, index) => ({
+  name: `pokemon-${index + 1}`,
+  url: `https://`,
+}));

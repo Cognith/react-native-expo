@@ -13,6 +13,8 @@ npm-debug.*
 web-build/
 .jest/
 coverage/
+*_BKUP
+*_BKUP.*
 
 # macOS
 .DS_Store

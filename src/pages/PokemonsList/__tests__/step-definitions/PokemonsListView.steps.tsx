@@ -1,49 +1,10 @@
 import { shallow, ShallowWrapper } from 'enzyme';
 import { defineFeature, loadFeature } from 'jest-cucumber';
 import PokemonsListView from '../../PokemonsListView';
-
-jest.mock('../../../../services/PokemonService', () => ({
-  getPokemonsList: jest.fn().mockResolvedValue({
-    results: [{ url: 'https://pokeapi.co/api/v2/pokemon/1' }],
-    next: 'https://pokeapi.co/api/v2/pokemon?offset=20&limit=20',
-  }),
-  getPokemonDetails: jest.fn().mockResolvedValue({
-    id: '0001',
-    name: 'bulbasaur',
-    height: 7,
-    weight: 69,
-    image:
-      'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png',
-    stats: [
-      {
-        key: 'hp',
-        value: 45,
-      },
-      {
-        key: 'attack',
-        value: 49,
-      },
-      {
-        key: 'defense',
-        value: 49,
-      },
-      {
-        key: 'special-attack',
-        value: 65,
-      },
-      {
-        key: 'special-defense',
-        value: 65,
-      },
-      {
-        key: 'speed',
-        value: 45,
-      },
-    ],
-    abilities: ['overgrow', 'chlorophyll'],
-    types: ['grass', 'poison'],
-  }),
-}));
+import PokemonService from '../../../../services/PokemonService';
+import { mockPokemonData, mockPokemonList } from '../../../../__mocks__/data';
+import { FlatList } from 'react-native';
+import { PokemonData } from '../../../../types';
 
 const props = {
   navigation: {
@@ -59,6 +20,12 @@ const feature = loadFeature(
 );
 
 defineFeature(feature, (test) => {
+  const getPokemonsListService = jest.spyOn(PokemonService, 'getPokemonsList');
+  const getPokemonDetailsService = jest.spyOn(
+    PokemonService,
+    'getPokemonDetails',
+  );
+
   let PokemonsListViewWrapper: ShallowWrapper;
 
   beforeEach(() => {
@@ -70,27 +37,45 @@ defineFeature(feature, (test) => {
     let instance: PokemonsListView;
 
     given('User on the Pokémon List page', () => {
+      getPokemonsListService.mockResolvedValue({
+        count: 20,
+        results: mockPokemonList,
+        next: 'https://pokeapi.co/api/v2/pokemon?limit=20&offset=0',
+        previous: null,
+      });
+      getPokemonDetailsService.mockResolvedValue(mockPokemonData);
+
       PokemonsListViewWrapper = shallow(<PokemonsListView {...props} />);
+      instance = PokemonsListViewWrapper.instance() as PokemonsListView;
     });
 
-    when('User fully loaded the Pokémon List page', async () => {
-      instance = PokemonsListViewWrapper.instance() as PokemonsListView;
-      await instance.componentDidMount();
-      PokemonsListViewWrapper.update();
-    });
+    when('User fully loaded the Pokémon List page', async () => {});
 
     then('User should see list page', () => {
-      const listPage = PokemonsListViewWrapper.find(
-        '[data-test-id="list-page"]',
-      );
+      const listPage = PokemonsListViewWrapper.find('[testID="list-page"]');
       expect(listPage.exists()).toBe(true);
     });
 
     then('User should see loading', () => {
       const loader = PokemonsListViewWrapper.find(
-        '[data-test-id="loading-indicator"]',
+        '[testID="loading-indicator"]',
       );
       expect(loader.exists()).toBe(true);
+    });
+
+    when('User is waiting for pokemons to load', async () => {
+      PokemonsListViewWrapper.update();
+    });
+
+    then('User will see 20 pokemons loaded initially', () => {
+      const pokemonList = PokemonsListViewWrapper.findWhere(
+        (node) =>
+          node.type() === FlatList && node.prop('testID') === 'pokemon-list',
+      );
+
+      // Access the data prop passed to FlatList
+      const pokemonItemData = pokemonList.prop('data') as PokemonData[];
+      expect(pokemonItemData.length).toEqual(20);
     });
   });
 });

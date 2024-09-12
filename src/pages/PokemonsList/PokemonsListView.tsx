@@ -11,7 +11,7 @@ export default class PokemonsListView extends PokemonsListController {
 
     return (
       <SafeAreaView
-        data-test-id="list-page"
+        testID="list-page"
         style={styles.base}
       >
         <View style={[styles.page, { height: height }]}>
@@ -29,7 +29,7 @@ export default class PokemonsListView extends PokemonsListController {
             if (isLoading && !pokemons.length) {
               return (
                 <ActivityIndicator
-                  data-test-id="loading-indicator"
+                  testID="loading-indicator"
                   style={styles.loader}
                   size={200}
                   color="#444444"
@@ -40,7 +40,7 @@ export default class PokemonsListView extends PokemonsListController {
             if (error) {
               return (
                 <View
-                  data-test-id="error-indicator"
+                  testID="error-indicator"
                   style={styles.error}
                 >
                   <PText>Error: {error}</PText>
@@ -50,7 +50,7 @@ export default class PokemonsListView extends PokemonsListController {
 
             return (
               <FlatList
-                data-test-id="pokemon-list"
+                testID="pokemon-list"
                 style={styles.list}
                 keyExtractor={({ id }) => id.toString()}
                 numColumns={2}
