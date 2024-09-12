@@ -43,7 +43,7 @@ export default class PokemonsListView extends PokemonsListController {
                   testID="error-indicator"
                   style={styles.error}
                 >
-                  <PText>Error: {error}</PText>
+                  <PText testID="error-message">Error: {error}</PText>
                 </View>
               );
             }

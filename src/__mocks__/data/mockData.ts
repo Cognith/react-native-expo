@@ -21,3 +21,14 @@ export const mockPokemonList = Array.from({ length: 20 }, (_, index) => ({
   name: `pokemon-${index + 1}`,
   url: `https://`,
 }));
+
+export const mockError = {
+  message: 'Request failed with status code 500',
+  response: {
+    status: 500,
+    statusText: 'Internal Server Error',
+    data: {
+      message: 'Failed to fetch Pokemon list',
+    },
+  },
+};

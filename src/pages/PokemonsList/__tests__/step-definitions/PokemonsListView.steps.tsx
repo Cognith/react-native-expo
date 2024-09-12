@@ -2,7 +2,11 @@ import { shallow, ShallowWrapper } from 'enzyme';
 import { defineFeature, loadFeature } from 'jest-cucumber';
 import PokemonsListView from '../../PokemonsListView';
 import PokemonService from '../../../../services/PokemonService';
-import { mockPokemonData, mockPokemonList } from '../../../../__mocks__/data';
+import {
+  mockError,
+  mockPokemonData,
+  mockPokemonList,
+} from '../../../../__mocks__/data';
 import { FlatList } from 'react-native';
 import { PokemonData } from '../../../../types';
 
@@ -27,6 +31,7 @@ defineFeature(feature, (test) => {
   );
 
   let PokemonsListViewWrapper: ShallowWrapper;
+  let instance: PokemonsListView;
 
   beforeEach(() => {
     jest.resetModules();
@@ -34,8 +39,6 @@ defineFeature(feature, (test) => {
   });
 
   test('User navigating to Pokemon List Page', ({ given, when, then }) => {
-    let instance: PokemonsListView;
-
     given('User on the Pokémon List page', () => {
       getPokemonsListService.mockResolvedValue({
         count: 20,
@@ -76,6 +79,41 @@ defineFeature(feature, (test) => {
       // Access the data prop passed to FlatList
       const pokemonItemData = pokemonList.prop('data') as PokemonData[];
       expect(pokemonItemData.length).toEqual(20);
+    });
+
+    then('User should see a Pokemon named "Bulbasaur"', () => {
+      const pokemonList = PokemonsListViewWrapper.findWhere(
+        (node) =>
+          node.type() === FlatList && node.prop('testID') === 'pokemon-list',
+      );
+      const pokemonItemData = pokemonList.prop('data') as PokemonData[];
+      const hasBulbasaur = pokemonItemData.some(
+        (pokemon) => pokemon.name === 'Bulbasaur'.toLowerCase(),
+      );
+      expect(hasBulbasaur).toBe(true);
+    });
+  });
+
+  test('User navigating to Pokemon Home Page with error', ({
+    given,
+    when,
+    then,
+  }) => {
+    given('User is on the Pokemon List Page', () => {
+      getPokemonsListService.mockRejectedValue(mockError);
+      PokemonsListViewWrapper = shallow(<PokemonsListView {...props} />);
+    });
+
+    when('there is an error loading the Pokemon List Page', async () => {
+      await instance.fetchPokemons();
+      PokemonsListViewWrapper.update();
+    });
+
+    then('User should see a message "Error:"', () => {
+      const errorMessage = PokemonsListViewWrapper.find(
+        '[testID="error-message"]',
+      );
+      expect(errorMessage.dive().text()).toContain('Error:');
     });
   });
 });
