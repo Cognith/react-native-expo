@@ -17,3 +17,13 @@ Feature: Pokemon List
         Given I am on the PokemonListPage with pokemon list
         When I search Pokemon by name
         Then I should only see the pokemon that contains the keyword in the search Input
+
+    Scenario: Refresh Pokemon List
+        Given I am on the PokemonListPage with pokemon list
+        When Refresh List
+        Then should fetch and refresh the pokemon list
+
+     Scenario: Press on Pokemon Card
+        Given I am on the PokemonListPage with pokemon list
+        When Press on one of the pokemon card
+        Then should navigate to Pokemon Detail screen

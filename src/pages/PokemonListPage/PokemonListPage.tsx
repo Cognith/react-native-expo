@@ -8,7 +8,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { Colors, ColorsName } from '../../assets/colors/colors';
 import IPokemon from '../../interfaces/IPokemon';
 import PokemonListController from './PokemonListController';
@@ -17,16 +17,22 @@ import SearchPokemonInput from './components/SearchPokemonInput';
 export default class PokemonListPage extends PokemonListController {
   renderHeaderComponent = () => {
     return (
-      <View style={styles.headerContainer}>
-        <SearchPokemonInput onChangeText={this.searchPokemon} />
+      <View style={styles.headerContainer} testID={'container'}>
+        <SearchPokemonInput
+          testID={'search_pokemon_input'}
+          onChangeText={this.searchPokemon}
+        />
       </View>
     );
   };
 
-  renderItem = ({ item }: { item: IPokemon }) => {
+  renderItem = ({ item, index }: { item: IPokemon; index: number }) => {
     return (
-      <View style={styles.cardWrapper} testID={'test_pokemon_card'}>
-        <TouchableWithoutFeedback onPress={this.goToPokemonDetailPage(item.id)}>
+      <View style={styles.cardWrapper}>
+        <TouchableWithoutFeedback
+          onPress={this.goToPokemonDetailPage(item.id)}
+          testID={'test_pokemon_card'}
+        >
           <View style={styles.cardContainer}>
             <View style={styles.pokemonIdContainer}>
               <Text style={styles.pokemonIdTitle}>{item.pokemonId}</Text>
@@ -42,7 +48,7 @@ export default class PokemonListPage extends PokemonListController {
 
               <View style={styles.pokemonTypesWrapper}>
                 {item.types.map((type) => (
-                  <View style={styles.pokemonTypeContainer}>
+                  <View key={type} style={styles.pokemonTypeContainer}>
                     <Text style={styles.pokemonTypeTitle}>
                       {type.toUpperCase()}
                     </Text>
@@ -72,23 +78,29 @@ export default class PokemonListPage extends PokemonListController {
     const { filteredPokemons, isLoading } = this.state;
 
     return (
-      <SafeAreaView style={styles.container} edges={['top']}>
-        <FlatList
-          refreshControl={
-            <RefreshControl refreshing={false} onRefresh={this.onRefreshList} />
-          }
-          data={filteredPokemons}
-          renderItem={this.renderItem}
-          keyExtractor={(i) => `${i.id}`}
-          numColumns={2}
-          onEndReached={this.fetchPokemonList}
-          contentContainerStyle={styles.listContainer}
-          onEndReachedThreshold={0.3}
-          ListHeaderComponent={this.renderHeaderComponent}
-          ListFooterComponent={this.renderFooterComponent}
-          stickyHeaderIndices={[0]}
-        />
-      </SafeAreaView>
+      <SafeAreaProvider>
+        <SafeAreaView style={styles.container} edges={['top']}>
+          <FlatList
+            refreshControl={
+              <RefreshControl
+                testID={'refresh_control'}
+                refreshing={false}
+                onRefresh={this.onRefreshList}
+              />
+            }
+            data={filteredPokemons}
+            renderItem={this.renderItem}
+            keyExtractor={(i, idx) => `${i.id}${idx}`}
+            numColumns={2}
+            onEndReached={this.fetchPokemonList}
+            contentContainerStyle={styles.listContainer}
+            onEndReachedThreshold={0.3}
+            ListHeaderComponent={this.renderHeaderComponent}
+            ListFooterComponent={this.renderFooterComponent}
+            stickyHeaderIndices={[0]}
+          />
+        </SafeAreaView>
+      </SafeAreaProvider>
     );
   }
 }

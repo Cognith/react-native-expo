@@ -1,19 +1,16 @@
-import { shallow, ShallowWrapper } from 'enzyme';
+import { mount, ReactWrapper, shallow, ShallowWrapper } from 'enzyme';
 import { defineFeature, loadFeature } from 'jest-cucumber';
-import { FlatList } from 'react-native';
+import { FlatList, RefreshControl } from 'react-native';
 import IPokemon from '../../../../interfaces/IPokemon';
 import ApiResponsePagination from '../../../../interfaces/api/ApiResponse';
 import { IPokemonResponse } from '../../../../interfaces/services/pokemonServices';
 import PokemonServices from '../../../../services/PokemonServices';
+import {
+  getPokemonDetailTestData,
+  getPokemonsTestData,
+} from '../../../../services/mockData';
 import PokemonListPage from '../../PokemonListPage';
 import SearchPokemonInput from '../../components/SearchPokemonInput';
-import { getPokemonDetailTestData, getPokemonsTestData } from './testData';
-
-const props = {
-  navigation: {
-    navigate: jest.fn(),
-  } as any,
-};
 
 const feature = loadFeature(
   './src/pages/PokemonListPage/__tests__/features/PokemonListPage.feature'
@@ -37,6 +34,13 @@ const mockGetPokemonDetail = jest
   .mockResolvedValue(getPokemonDetailTestData);
 
 defineFeature(feature, (test) => {
+  const mockNavigate = jest.fn();
+  const props = {
+    navigation: {
+      navigate: mockNavigate,
+    } as any,
+  };
+
   beforeEach(() => {
     jest.resetModules();
 
@@ -95,6 +99,7 @@ defineFeature(feature, (test) => {
       PokemonListPageWrapper = shallow(<PokemonListPage {...props} />);
       instance = PokemonListPageWrapper.instance() as PokemonListPage;
       await runAllPromises();
+      PokemonListPageWrapper.update();
     });
 
     when('I scroll down', async () => {
@@ -102,9 +107,10 @@ defineFeature(feature, (test) => {
         .props()
         .onEndReached?.({ distanceFromEnd: 0 });
       await runAllPromises();
+      PokemonListPageWrapper.update();
     });
 
-    then('it should load more pokemon', () => {
+    then('it should load more pokemon', async () => {
       expect(mockGetPokemons).toHaveBeenCalledTimes(2);
       instance = PokemonListPageWrapper.instance() as PokemonListPage;
     });
@@ -121,25 +127,78 @@ defineFeature(feature, (test) => {
   });
 
   test('Search Pokemon List', ({ given, when, then }) => {
-    let PokemonListPageWrapper: ShallowWrapper;
+    let PokemonListPageWrapper: ReactWrapper;
     let instance: PokemonListPage;
 
     given('I am on the PokemonListPage with pokemon list', async () => {
-      PokemonListPageWrapper = shallow(<PokemonListPage {...props} />);
+      PokemonListPageWrapper = mount(<PokemonListPage {...props} />);
       instance = PokemonListPageWrapper.instance() as PokemonListPage;
       await runAllPromises();
+      expect(instance.state.filteredPokemons.length).toEqual(
+        getPokemonsTestData.results.length
+      );
     });
 
     when('I search Pokemon by name', async () => {
-      instance.searchPokemon(getPokemonDetailTestData.name);
+      PokemonListPageWrapper.find(SearchPokemonInput)
+        .props()
+        .onChangeText?.('balmond');
       PokemonListPageWrapper.update();
     });
 
     then(
       'I should only see the pokemon that contains the keyword in the search Input',
       () => {
-        expect(instance.state.filteredPokemons.length).toBeGreaterThan(0);
+        expect(instance.state.filteredPokemons.length).toEqual(0);
       }
     );
+  });
+
+  test('Refresh Pokemon List', ({ given, when, then }) => {
+    let PokemonListPageWrapper: ReactWrapper;
+    let instance: PokemonListPage;
+
+    given('I am on the PokemonListPage with pokemon list', async () => {
+      PokemonListPageWrapper = mount(<PokemonListPage {...props} />);
+      instance = PokemonListPageWrapper.instance() as PokemonListPage;
+      await runAllPromises();
+      expect(instance.state.filteredPokemons.length).toEqual(
+        getPokemonsTestData.results.length
+      );
+    });
+
+    when('Refresh List', async () => {
+      PokemonListPageWrapper.find(RefreshControl).props().onRefresh?.();
+      await runAllPromises();
+      PokemonListPageWrapper.update();
+    });
+
+    then('should fetch and refresh the pokemon list', () => {
+      expect(instance.state.filteredPokemons.length).toEqual(9);
+    });
+  });
+
+  test('Press on Pokemon Card', ({ given, when, then }) => {
+    let PokemonListPageWrapper: ReactWrapper;
+    let instance: PokemonListPage;
+
+    given('I am on the PokemonListPage with pokemon list', async () => {
+      PokemonListPageWrapper = mount(<PokemonListPage {...props} />);
+      instance = PokemonListPageWrapper.instance() as PokemonListPage;
+      await runAllPromises();
+      expect(instance.state.filteredPokemons.length).toEqual(
+        getPokemonsTestData.results.length
+      );
+    });
+
+    when('Press on one of the pokemon card', () => {
+      instance.goToPokemonDetailPage(1)();
+    });
+
+    then('should navigate to Pokemon Detail screen', () => {
+      expect(mockNavigate).toBeCalledWith('PokemonDetail', {
+        id: getPokemonDetailTestData.id,
+      });
+    });
   });
 });

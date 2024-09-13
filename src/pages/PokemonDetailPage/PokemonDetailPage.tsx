@@ -65,7 +65,7 @@ export class PokemonDetailPage extends PokemonDetailController {
       profile,
       abilities,
     } = detail || {};
-
+    console.log('state', stats);
     return (
       <SafeAreaProvider>
         <ScrollView style={styles.container}>

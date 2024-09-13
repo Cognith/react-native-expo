@@ -6,3 +6,8 @@ Feature: Pokemon List
         Then App should start to fetch pokemon detail data
         Then I should see the pokemon detail
 
+    Scenario: Should Go to url on press generation with link icon 
+        Given I am on the PokemonDetail Page with pokemon detail loaded and generation url link exist
+        When press on link icon
+        Then should go to url
+

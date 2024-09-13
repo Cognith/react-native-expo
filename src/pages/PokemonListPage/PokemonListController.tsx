@@ -100,7 +100,6 @@ export default class PokemonListController extends Component<
   };
 
   filterByPokemonName = (pokemons: IPokemon[], keyword: string) => {
-    if (!keyword) return pokemons;
     return pokemons.filter((pokemon) =>
       pokemon.name.toUpperCase().includes(keyword.toUpperCase())
     );
