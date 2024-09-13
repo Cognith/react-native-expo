@@ -1,40 +1,21 @@
-// HomePage.tsx
 import React from "react";
 import {
-  FlatList,
-  ActivityIndicator,
-  Text,
-  TouchableOpacity,
-  Image,
   View,
-  StatusBar,
+  Text,
+  FlatList,
+  Image,
+  TouchableOpacity,
+  ActivityIndicator,
   TextInput,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import HomeController from "../pages/BoilerplatePages/ComponentController";
+import { styles } from "../constanst/HomeStyles";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { styles } from "../../constanst/HomeStyles";
-import HomeController from "../BoilerplatePages/ComponentController";
+import { RootStackParam } from "../pages/BoilerplatePages/ComponentView"; 
 
-export type RootStackParam = {
-  Home: undefined;
-  Detail: { pokemonUrl: string };
-};
+type HomeComponentProps = NativeStackScreenProps<RootStackParam, 'Home'>;
 
-type HomePageProps = NativeStackScreenProps<RootStackParam, "Home">;
-
-export default class HomePage extends HomeController<HomePageProps> {
-  constructor(props: HomePageProps) {
-    super(props);
-    this.state = {
-      ...this.state, 
-      searchQuery: "",
-      filteredPokemonList: [],
-      loading: true,
-      loadingMore: false,
-      offset: 0,
-    };
-  }
-
+class HomeComponent extends HomeController<HomeComponentProps> {
   render(): JSX.Element {
     const { navigation } = this.props;
     const {
@@ -42,16 +23,13 @@ export default class HomePage extends HomeController<HomePageProps> {
       loading,
       loadingMore,
       searchQuery,
-    } = this.state; 
+    } = this.state;
 
-    const renderItem = ({
-      item,
-    }: {
-      item: { id: number; name: string; imageUrl: string; url: string };
-    }) => (
+    const renderItem = ({ item }: { item: { id: number; name: string; imageUrl: string; url: string } }) => (
       <TouchableOpacity
         style={styles.item}
         onPress={() => navigation.navigate("Detail", { pokemonUrl: item.url })}
+        
       >
         <Image source={{ uri: item.imageUrl }} style={styles.pokemonImage} />
         <View style={styles.pokemonInfo}>
@@ -67,12 +45,12 @@ export default class HomePage extends HomeController<HomePageProps> {
     };
 
     return (
-      <SafeAreaView style={styles.container}>
+      <View style={styles.container}>
         <TextInput
           style={styles.searchBar}
           placeholder="Search Pokemon by name or ID"
           value={searchQuery}
-          onChangeText={this.handleSearch} 
+          onChangeText={this.handleSearch}
         />
         {loading ? (
           <ActivityIndicator size="large" color="#0000ff" />
@@ -81,13 +59,15 @@ export default class HomePage extends HomeController<HomePageProps> {
             data={filteredPokemonList}
             renderItem={renderItem}
             keyExtractor={(item, index) => `${item.id}-${index}`}
-            onEndReached={this.handleLoadMore} 
+            onEndReached={this.handleLoadMore}
             onEndReachedThreshold={0.5}
             ListFooterComponent={renderFooter}
             numColumns={2}
           />
         )}
-      </SafeAreaView>
+      </View>
     );
   }
 }
+
+export default HomeComponent;
