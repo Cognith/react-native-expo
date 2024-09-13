@@ -5,9 +5,9 @@ import {
   RefreshControl,
   StyleSheet,
   Text,
+  TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors, ColorsName } from '../../assets/colors/colors';
 import IPokemon from '../../interfaces/IPokemon';
@@ -25,7 +25,7 @@ export default class PokemonListPage extends PokemonListController {
 
   renderItem = ({ item }: { item: IPokemon }) => {
     return (
-      <View style={styles.cardWrapper}>
+      <View style={styles.cardWrapper} testID={'test_pokemon_card'}>
         <TouchableWithoutFeedback onPress={this.goToPokemonDetailPage(item.id)}>
           <View style={styles.cardContainer}>
             <View style={styles.pokemonIdContainer}>

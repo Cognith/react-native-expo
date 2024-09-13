@@ -55,11 +55,11 @@ export default class PokemonListController extends Component<
     try {
       const { results, next } = await PokemonServices.getPokemons(offsets);
       const pokemonIds: string[] = results
-        .map<string | undefined>((pokemon) => {
+        .map<string>((pokemon) => {
           const match = pokemon.url.match(/\/pokemon\/(\d+)\//);
-          return match?.[1];
+          return match?.[1] || '';
         })
-        .filter((i) => i !== undefined);
+        .filter((i) => !!i);
 
       const pokemonsPromises = pokemonIds.map((id) =>
         PokemonServices.getPokemonDetail(id)
@@ -73,7 +73,6 @@ export default class PokemonListController extends Component<
     } finally {
       this.setState((prev) => {
         const _pokemons = [...prev.pokemons, ...pokemons];
-
         return {
           isLoading: false,
           pokemons: _pokemons,
@@ -94,16 +93,17 @@ export default class PokemonListController extends Component<
   };
 
   searchPokemon = (text: string) => {
+    console.log('text', text);
     this.setState((prev) => ({
       searchFilter: text,
       filteredPokemons: [...this.filterByPokemonName(prev.pokemons, text)],
     }));
   };
 
-  private filterByPokemonName = (pokemons: IPokemon[], keyword: string) => {
+  filterByPokemonName = (pokemons: IPokemon[], keyword: string) => {
     if (!keyword) return pokemons;
     return pokemons.filter((pokemon) =>
-      pokemon.name.includes(keyword.toUpperCase())
+      pokemon.name.toUpperCase().includes(keyword.toUpperCase())
     );
   };
 
