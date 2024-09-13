@@ -8,49 +8,22 @@ import {
   ActivityIndicator,
 } from "react-native";
 import ComponentController from "./ComponentController";
-import { PokemonCard, SearchBar } from "../../components";
+import { PokemonCard, PokemonList, SearchBar } from "../../components";
 
 export default class HomePage extends ComponentController {
   render() {
-    const { pokemon } = this.state;
+    const { pokemon, isLoading } = this.state;
+    const { navigateToDetail, onEndReached, onScrollBeginDrag } = this;
     return (
       <SafeAreaView style={styles.container}>
-        <View
-          style={StyleSheet.flatten([
-            styles.paddingContainer,
-            { paddingVertical: Platform.OS === "android" ? 30 : 0 },
-          ])}
-        >
+        <View style={styles.paddingContainer}>
           <SearchBar onChangeText={this.onChangeText} />
-          <FlatList
-            data={pokemon}
-            numColumns={2}
-            showsVerticalScrollIndicator={false}
-            keyExtractor={(item) => item.name}
-            renderItem={({ item }) => (
-              <PokemonCard
-                item={item}
-                onPress={() => this.navigateToDetail(item)}
-              />
-            )}
-            ListFooterComponent={() => {
-              const { isLoading } = this.state;
-              if (isLoading) return <ActivityIndicator size="large" />;
-              return null;
-            }}
-            ListEmptyComponent={() => {
-              const { isLoading } = this.state;
-              if (!isLoading)
-                return (
-                  <Text style={styles.emptyDataText}>Pokemon not found</Text>
-                );
-              return null;
-            }}
-            onEndReachedThreshold={0.5}
-            onEndReached={this.onEndReached}
-            onScrollBeginDrag={this.onScrollBeginDrag}
-            contentContainerStyle={styles.contentContainerStyle}
-            columnWrapperStyle={styles.columnWrapperStyle}
+          <PokemonList
+            pokemon={pokemon}
+            isLoading={isLoading}
+            onPress={navigateToDetail}
+            onEndReached={onEndReached}
+            onScrollBeginDrag={onScrollBeginDrag}
           />
         </View>
       </SafeAreaView>
@@ -65,6 +38,7 @@ const styles = StyleSheet.create({
   },
   paddingContainer: {
     paddingHorizontal: 20,
+    paddingVertical: 10,
   },
   emptyDataText: { color: "#ECDFCC", alignSelf: "center" },
   columnWrapperStyle: {

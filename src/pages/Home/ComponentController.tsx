@@ -1,6 +1,7 @@
 import { Component } from "react";
 import { Navigation, Pokemon } from "../../types";
 import { pokemonTransformer } from "../../helpers";
+import { getPokemon, getPokemonList } from "../../services";
 
 interface Props {
   navigation: Navigation["navigation"];
@@ -51,24 +52,17 @@ export default class ComponentController extends Component<Props, S> {
   fetchAllPokemon = async (offset?: number | 0) => {
     const { isLoading } = this.state;
     let pokemonArray: Pokemon[] = [];
-    const url = `https://pokeapi.co/api/v2/pokemon?offset=${offset}&limit=20`;
 
     if (!isLoading) {
-      console.log("Fetching All Pokemon ...");
-      console.log("[d] url", url);
       try {
         if (!isLoading) this.setState({ isLoading: true });
-
-        const response = await fetch(url);
-        const responseJson = await response.json();
-
-        if (responseJson.results.length > 0) {
-          const pokemonPromises = responseJson.results.map(
+        const pokemonListJson = await getPokemonList(offset);
+        if (pokemonListJson.results.length > 0) {
+          const pokemonPromises = pokemonListJson.results.map(
             async (item: any) => {
               try {
-                const pokemonResponse = await fetch(item.url);
-                const pokemon = await pokemonResponse.json();
-                const newPokemon = pokemonTransformer(pokemon);
+                const pokemonJson = await getPokemon(item.name);
+                const newPokemon = pokemonTransformer(pokemonJson);
                 return newPokemon;
               } catch (error) {
                 console.log(
@@ -99,15 +93,11 @@ export default class ComponentController extends Component<Props, S> {
   };
 
   fetchPokemon = async (query: string) => {
-    const { isLoading } = this.state;
-    const url = `https://pokeapi.co/api/v2/pokemon/${query.toLowerCase()}`;
-
     try {
-      console.log("Fetching Pokemon:", query);
+      const { isLoading } = this.state;
       if (!isLoading) this.setState({ isLoading: true });
 
-      const pokemonResponse = await fetch(url);
-      const pokemonJson = await pokemonResponse.json();
+      const pokemonJson = await getPokemon(query);
       const newPokemon = pokemonTransformer(pokemonJson);
 
       this.setState({

@@ -9,86 +9,20 @@ import {
   ActivityIndicator,
 } from "react-native";
 import ComponentController from "./ComponentController";
-import { IdBadge, SearchBar, TypeBadge } from "../../components";
+import { IdBadge, PokemonDetail, SearchBar, TypeBadge } from "../../components";
 
 export default class DetailPage extends ComponentController {
-  _renderLoading = () => {
-    const { isLoading } = this.state;
-    if (isLoading) return <ActivityIndicator size={"large"} />;
-    return null;
-  };
-
-  _renderContent = () => {
-    const { isLoading, pokemon } = this.state;
-    if (isLoading) return null;
-    if (pokemon) {
-      return (
-        <View style={styles.contentContainer}>
-          <View style={styles.idBadgeContainer}>
-            <IdBadge
-              type={pokemon?.types[0]?.name}
-              formattedId={pokemon?.formattedId}
-            />
-          </View>
-          <Image
-            style={styles.pokemonImage}
-            source={{
-              uri: pokemon?.image,
-            }}
-          />
-          <Text style={styles.nameText} testID="pokemon-name-text">
-            {pokemon?.name}
-          </Text>
-          <View style={styles.descriptionBox}>
-            <Text style={styles.descriptionText}>
-              "Lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum
-              dolor sit amet"
-            </Text>
-            <Text style={styles.typeText}>Pokemon Type</Text>
-            <View style={styles.typeContainer}>
-              {pokemon?.types.map((type, index) => (
-                <View
-                  key={`${type.name}-${index}`}
-                  style={styles.typeBadgeWrapper}
-                >
-                  <TypeBadge type={type.name} />
-                </View>
-              ))}
-            </View>
-            <View style={styles.statsBox}>
-              <FlatList
-                data={pokemon?.stats}
-                numColumns={2}
-                showsVerticalScrollIndicator={false}
-                columnWrapperStyle={styles.columnWrapperStyle}
-                keyExtractor={(item) => item.name}
-                renderItem={({ item }) => (
-                  <View style={styles.statWrapper}>
-                    <Text style={styles.statNameText}>{item.name}</Text>
-                    <Text style={styles.statBaseStatText}>{item.baseStat}</Text>
-                  </View>
-                )}
-              />
-            </View>
-          </View>
-        </View>
-      );
-    }
-    return <Text style={styles.emptyDataText}>Pokemon not found</Text>;
-  };
-
   render() {
+    const { isLoading, pokemon } = this.state;
     return (
       <SafeAreaView style={styles.container}>
-        <View
-          style={StyleSheet.flatten([
-            styles.paddingContainer,
-            { paddingVertical: Platform.OS === "android" ? 30 : 0 },
-          ])}
-        >
+        <View style={styles.paddingContainer}>
           <SearchBar onChangeText={this.onChangeText} />
-          {this._renderLoading()}
-          {this._renderContent()}
+          {isLoading && <ActivityIndicator size={"large"} color={"white"} />}
+          {!isLoading && pokemon && <PokemonDetail pokemon={pokemon} />}
+          {!isLoading && !pokemon && (
+            <Text style={styles.emptyDataText}>Pokemon not found</Text>
+          )}
         </View>
       </SafeAreaView>
     );
@@ -102,6 +36,7 @@ const styles = StyleSheet.create({
   },
   paddingContainer: {
     paddingHorizontal: 20,
+    paddingVertical: 10,
   },
   emptyDataText: { color: "#ECDFCC", alignSelf: "center" },
   contentContainer: { paddingHorizontal: 20, paddingVertical: 10 },
