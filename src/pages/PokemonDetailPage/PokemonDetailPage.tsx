@@ -1,7 +1,13 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { FlatList, Image, StyleSheet, Text, View } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  FlatList,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { Colors, ColorsName } from '../../assets/colors/colors';
 import BackNavigationBtn from '../../components/BackNavigationBtn/BackNavigationBtn';
 import IPokemon from '../../interfaces/IPokemon';
@@ -61,69 +67,73 @@ export class PokemonDetailPage extends PokemonDetailController {
     } = detail || {};
 
     return (
-      <ScrollView style={styles.container}>
-        <SafeAreaView style={styles.containerView}>
-          <BackNavigationBtn navigation={this.props.navigation} />
+      <SafeAreaProvider>
+        <ScrollView style={styles.container}>
+          <SafeAreaView style={styles.containerView}>
+            <BackNavigationBtn navigation={this.props.navigation} />
 
-          <View style={styles.imageContainer}>
-            <Image
-              source={{ uri: image }}
-              style={styles.image}
-              resizeMode={'contain'}
-            />
-            <View style={styles.pokemonIdContainer}>
-              <Text style={styles.pokemonIdTitle}>{pokemonId}</Text>
-            </View>
-          </View>
-
-          <Text style={styles.pokemonName}>{name}</Text>
-
-          <View style={styles.detailContainer}>
-            <Text style={styles.flavorTitle}>"{flavorText}"</Text>
-
-            <View style={styles.pokemonTypesWrapper}>
-              <Text style={styles.pokemonDetailHeader}>{'Pokemon Type'}</Text>
-
-              <View style={styles.pokemonTypesContainer}>
-                {types?.map((type) => (
-                  <View style={styles.typeContainer}>
-                    <Text style={styles.typeTitle}>{type.toUpperCase()}</Text>
-                  </View>
-                ))}
+            <View style={styles.imageContainer}>
+              <Image
+                source={{ uri: image }}
+                style={styles.image}
+                resizeMode={'contain'}
+              />
+              <View style={styles.pokemonIdContainer}>
+                <Text style={styles.pokemonIdTitle}>{pokemonId}</Text>
               </View>
             </View>
 
-            <FlatList
-              scrollEnabled={false}
-              data={stats}
-              renderItem={this.renderPokemonStat}
-              numColumns={2}
-              initialNumToRender={types?.length}
-              contentContainerStyle={styles.pokemonStatsContainer}
-              keyExtractor={(i) => `${i.label}`}
-            />
+            <Text style={styles.pokemonName} testID={'pokemon_name'}>
+              {name}
+            </Text>
 
-            <FlatList
-              scrollEnabled={false}
-              data={profile}
-              renderItem={this.renderPokemonProfile}
-              numColumns={2}
-              initialNumToRender={profile?.length}
-              contentContainerStyle={styles.pokemonStatsContainer}
-              keyExtractor={(i) => `${i.label}`}
-            />
+            <View style={styles.detailContainer}>
+              <Text style={styles.flavorTitle}>"{flavorText}"</Text>
 
-            <Text style={styles.pokemonDetailHeader}>{'Abilities'}</Text>
-            <FlatList
-              scrollEnabled={false}
-              data={abilities}
-              renderItem={this.renderPokemonAbilities}
-              initialNumToRender={abilities?.length}
-              keyExtractor={(i) => `${i}`}
-            />
-          </View>
-        </SafeAreaView>
-      </ScrollView>
+              <View style={styles.pokemonTypesWrapper}>
+                <Text style={styles.pokemonDetailHeader}>{'Pokemon Type'}</Text>
+
+                <View style={styles.pokemonTypesContainer}>
+                  {types?.map((type) => (
+                    <View style={styles.typeContainer} key={type}>
+                      <Text style={styles.typeTitle}>{type.toUpperCase()}</Text>
+                    </View>
+                  ))}
+                </View>
+              </View>
+
+              <FlatList
+                scrollEnabled={false}
+                data={stats}
+                renderItem={this.renderPokemonStat}
+                numColumns={2}
+                initialNumToRender={types?.length}
+                contentContainerStyle={styles.pokemonStatsContainer}
+                keyExtractor={(i) => `${i.label}`}
+              />
+
+              <FlatList
+                scrollEnabled={false}
+                data={profile}
+                renderItem={this.renderPokemonProfile}
+                numColumns={2}
+                initialNumToRender={profile?.length}
+                contentContainerStyle={styles.pokemonStatsContainer}
+                keyExtractor={(i) => `${i.label}`}
+              />
+
+              <Text style={styles.pokemonDetailHeader}>{'Abilities'}</Text>
+              <FlatList
+                scrollEnabled={false}
+                data={abilities}
+                renderItem={this.renderPokemonAbilities}
+                initialNumToRender={abilities?.length}
+                keyExtractor={(i) => `${i}`}
+              />
+            </View>
+          </SafeAreaView>
+        </ScrollView>
+      </SafeAreaProvider>
     );
   }
 }

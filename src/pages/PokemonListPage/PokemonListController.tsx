@@ -93,7 +93,6 @@ export default class PokemonListController extends Component<
   };
 
   searchPokemon = (text: string) => {
-    console.log('text', text);
     this.setState((prev) => ({
       searchFilter: text,
       filteredPokemons: [...this.filterByPokemonName(prev.pokemons, text)],
