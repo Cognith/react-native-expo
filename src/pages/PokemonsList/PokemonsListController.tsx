@@ -13,8 +13,9 @@ export interface PokemonsListState {
   offset: number;
   isLoading: boolean;
   error: null | string;
-  search: string;
   next: string | null; // Determine if more data is available
+  search: string; // Stores the current input value
+  debouncedSearch: string; // Stores the debounced value
 }
 
 export default class PokemonsListController extends Component<
@@ -30,11 +31,12 @@ export default class PokemonsListController extends Component<
       offset: 0,
       isLoading: true,
       error: null,
-      search: '',
       next: null,
+      search: '',
+      debouncedSearch: '',
     };
 
-    this.debounceSearch = debounce(this.handleSearch, 300);
+    this.debounceSearch = debounce(this.handleDebouncedSearch, 300);
   }
 
   // Debounced search handler
@@ -92,17 +94,23 @@ export default class PokemonsListController extends Component<
     }
   };
 
+  // Triggered by debounced function
+  handleDebouncedSearch = (text: string) => {
+    this.setState({ debouncedSearch: text });
+  };
+
   handleSearch = (text: string) => {
     this.setState({ search: text });
+    this.debounceSearch(text); // Call the debounced search function
   };
 
   filteredPokemonList = () => {
-    const { search, pokemons } = this.state;
+    const { debouncedSearch, pokemons } = this.state;
 
     return pokemons.filter(
       (pokemon) =>
-        pokemon.name.toLowerCase().includes(search.toLowerCase()) ||
-        pokemon.id.toString().includes(search),
+        pokemon.name.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+        pokemon.id.toString().includes(debouncedSearch),
     );
   };
 }

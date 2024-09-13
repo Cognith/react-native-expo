@@ -16,10 +16,11 @@ export default class PokemonsListView extends PokemonsListController {
       >
         <View style={[styles.page, { height: height }]}>
           <TextInput
+            testID="search-bar"
             style={styles.searchBar}
             placeholder="Search Pokemon..."
-            // value={this.state.search}
-            onChangeText={(text) => this.debounceSearch(text)}
+            value={this.state.search}
+            onChangeText={(text) => this.handleSearch(text)}
             textColor="#FFFFFF"
             placeholderTextColor="#FFFFFF73"
             activeUnderlineColor="#FFFFFF73"
