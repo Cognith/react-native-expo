@@ -7,10 +7,8 @@ import {
   mockPokemonData,
   mockPokemonList,
 } from '../../../../__mocks__/data';
-import { FlatList } from 'react-native';
+import { FlatList, TextInput } from 'react-native';
 import { PokemonData } from '../../../../types';
-import { PokemonsListState } from '../../PokemonsListController';
-import { isLoading } from 'expo-font';
 
 const props = {
   navigation: {
@@ -42,7 +40,7 @@ defineFeature(feature, (test) => {
   });
 
   test('User navigating to Pokemon List Page', ({ given, when, then }) => {
-    given('User is on the Pokémon List page', () => {
+    given('User is on the Pokemon List page', () => {
       getPokemonsListService.mockResolvedValue({
         count: 20,
         results: mockPokemonList,
@@ -55,7 +53,7 @@ defineFeature(feature, (test) => {
       instance = PokemonsListShallowWrapper.instance() as PokemonsListView;
     });
 
-    when('User loaded the initial state of Pokémon List page', async () => {});
+    when('User loaded the initial state of Pokemon List page', async () => {});
 
     then('User should see the list page', () => {
       const listPage = PokemonsListShallowWrapper.find('[testID="list-page"]');
@@ -139,7 +137,7 @@ defineFeature(feature, (test) => {
       instance = PokemonsListReactWrapper.instance() as PokemonsListView;
     });
 
-    when('User loaded the initial state of Pokémon List page', async () => {
+    when('User loaded the initial state of Pokemon List page', async () => {
       await instance.componentDidMount();
       PokemonsListReactWrapper.update();
     });
@@ -180,6 +178,60 @@ defineFeature(feature, (test) => {
         '[testID="pokemon-item"]',
       );
       expect(pokemonItem.length).toBeGreaterThan(20);
+    });
+  });
+
+  test('User searching for a Pokemon in Pokemon List Page', async ({
+    given,
+    when,
+    then,
+  }) => {
+    given('User is on the Pokemon List Page', async () => {
+      getPokemonsListService.mockResolvedValue({
+        count: 20,
+        results: mockPokemonList,
+        next: 'https://pokeapi.co/api/v2/pokemon?limit=20&offset=0',
+        previous: null,
+      });
+      getPokemonDetailsService.mockResolvedValue(mockPokemonData);
+
+      PokemonsListReactWrapper = mount(<PokemonsListView {...props} />);
+      instance = PokemonsListReactWrapper.instance() as PokemonsListView;
+    });
+
+    when('User loaded the initial state of Pokemon List page', async () => {
+      await instance.componentDidMount();
+      PokemonsListReactWrapper.update();
+    });
+
+    then('User should see the list page', () => {
+      const listPage = PokemonsListReactWrapper.find('[testID="list-page"]');
+      expect(listPage.exists()).toBe(true);
+    });
+
+    when("User type part of a Pokemon's name in the search input", async () => {
+      PokemonsListReactWrapper.update();
+
+      const searchBar = PokemonsListReactWrapper.findWhere(
+        (node) =>
+          node.type() === TextInput && node.prop('testID') === 'search-bar',
+      );
+      searchBar.simulate('change', { target: { value: 'bulb' } });
+
+      PokemonsListReactWrapper.update();
+    });
+
+    then('User should see a list of Pokemons found by the name', () => {
+      const foundPokemon = PokemonsListReactWrapper.findWhere(
+        (node) =>
+          node.prop('testID') === 'pokemon-name' &&
+          node.text().includes('bulb'),
+      );
+
+      // Check if all found Pokemon names include 'bulb'
+      foundPokemon.forEach((node) => {
+        expect(node.text().toLowerCase()).toContain('bulb');
+      });
     });
   });
 });
