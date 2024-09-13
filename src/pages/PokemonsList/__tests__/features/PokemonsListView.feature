@@ -29,3 +29,10 @@ Feature: Pokemon List
     Then User should see the list page
     When User type part of a Pokemon's name in the search input
     Then User should see a list of Pokemons found by the name
+
+  Scenario: User navigates to the Pokemon Details page from Pokemon List Page
+    Given User is on the Pokemon List Page
+    When User loaded the initial state of Pokemon List page
+    Then User should see the list page
+    When User presses on a Pokemon item
+    Then User should navigate to the Pokemon details page

@@ -13,6 +13,8 @@ import { PokemonData } from '../../../../types';
 const props = {
   navigation: {
     navigate: jest.fn(),
+    push: jest.fn(),
+    pop: jest.fn(),
   } as any,
   route: {
     params: {},
@@ -174,8 +176,9 @@ defineFeature(feature, (test) => {
     });
 
     then('User should see more Pokemons loaded', () => {
-      const pokemonItem = PokemonsListReactWrapper.find(
-        '[testID="pokemon-item"]',
+      const pokemonItem = PokemonsListReactWrapper.findWhere(
+        (node) =>
+          node.prop('testID') && node.prop('testID').includes('pokemon-card'),
       );
       expect(pokemonItem.length).toBeGreaterThan(20);
     });
@@ -231,6 +234,56 @@ defineFeature(feature, (test) => {
       // Check if all found Pokemon names include 'bulb'
       foundPokemon.forEach((node) => {
         expect(node.text().toLowerCase()).toContain('bulb');
+      });
+    });
+  });
+
+  test('User navigates to the Pokemon Details page from Pokemon List Page', async ({
+    given,
+    when,
+    then,
+  }) => {
+    given('User is on the Pokemon List Page', async () => {
+      getPokemonsListService.mockResolvedValue({
+        count: 20,
+        results: mockPokemonList,
+        next: 'https://pokeapi.co/api/v2/pokemon?limit=20&offset=0',
+        previous: null,
+      });
+      getPokemonDetailsService.mockResolvedValue(mockPokemonData);
+
+      PokemonsListReactWrapper = mount(<PokemonsListView {...props} />);
+      instance = PokemonsListReactWrapper.instance() as PokemonsListView;
+    });
+
+    when('User loaded the initial state of Pokemon List page', async () => {
+      await instance.componentDidMount();
+      PokemonsListReactWrapper.update();
+    });
+
+    then('User should see the list page', () => {
+      const listPage = PokemonsListReactWrapper.find('[testID="list-page"]');
+      expect(listPage.exists()).toBe(true);
+    });
+
+    when('User presses on a Pokemon item', async () => {
+      PokemonsListReactWrapper.update();
+
+      const pokemonItem = PokemonsListReactWrapper.findWhere(
+        (node) => node.prop('testID') === 'pokemon-card_0001-10',
+      ).first();
+
+      const onPress = pokemonItem.prop('onPress');
+      onPress();
+
+      PokemonsListReactWrapper.update();
+    });
+
+    then('User should navigate to the Pokemon details page', () => {
+      expect(props.navigation.push).toHaveBeenCalledWith('Details', {
+        pokemon: expect.objectContaining({
+          name: 'bulbasaur',
+        }),
       });
     });
   });

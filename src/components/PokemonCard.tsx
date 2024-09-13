@@ -1,10 +1,11 @@
 import { Component } from 'react';
-import { StyleSheet, View, Image, Pressable } from 'react-native';
+import { StyleSheet, Image, Pressable } from 'react-native';
 import { PokemonTags, PText } from '.';
 import { PokemonData } from '../types';
 
 // Props
 interface Props {
+  indexData?: string | undefined;
   data: PokemonData;
   onPress: (data: PokemonData) => void;
 }
@@ -19,7 +20,10 @@ export default class PokemonCard extends Component<Props> {
 
     return (
       <Pressable
-        testID="pokemon-item"
+        testID={
+          'pokemon-card' +
+          (this.props.indexData ? '_' + this.props.indexData : '')
+        }
         onPress={() => this.props.onPress(this.props.data)}
         style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
       >

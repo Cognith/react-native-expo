@@ -56,8 +56,9 @@ export default class PokemonsListView extends PokemonsListController {
                 keyExtractor={({ id }, index) => `${id}-${index}`}
                 numColumns={2}
                 data={this.filteredPokemonList()}
-                renderItem={({ item }) => (
+                renderItem={({ item, index }) => (
                   <PokemonCard
+                    indexData={`${item.id}-${index}`}
                     data={item}
                     onPress={() => {
                       this.props.navigation.push('Details', { pokemon: item });

@@ -1,4 +1,3 @@
-
 import { PokemonData } from ".";
 
 export type RootStackParamList = {
