@@ -21,6 +21,7 @@ defineFeature(feature, (test) => {
   jest.useFakeTimers(); // for debounce
   const mockSetState = jest.fn();
   const pokemonListFetchMock = jest.fn();
+  const fetchAllPokemonMock = jest.fn();
 
   beforeEach(() => {
     jest.resetModules();
@@ -106,6 +107,106 @@ defineFeature(feature, (test) => {
       expect(props.navigation.navigate).toHaveBeenCalledWith("Detail", {
         pokemon: pokemonDetailMock,
       });
+    });
+  });
+
+  test("onEndReached is triggered and conditions are met", ({
+    given,
+    when,
+    then,
+  }) => {
+    let HomePageWrapper: ShallowWrapper;
+    let instance: HomePage;
+
+    given("the flatlist has scrolled and query is an empty string", () => {
+      HomePageWrapper = shallow(<HomePage {...props} />);
+      instance = HomePageWrapper.instance() as HomePage;
+      instance.fetchAllPokemon = fetchAllPokemonMock;
+
+      jest.spyOn(instance, "setState").mockImplementation((state) => {
+        instance.state = {
+          ...instance.state,
+          ...(typeof state === "function"
+            ? state(instance.state, props)
+            : state),
+        };
+      });
+
+      instance.setState({
+        isFlatlistScrolled: true,
+        query: "",
+        offset: 20,
+      });
+    });
+
+    when("I trigger the onEndReached function", () => {
+      instance.onEndReached();
+    });
+
+    then("it should fetch more Pokemon", () => {
+      expect(fetchAllPokemonMock).toHaveBeenCalledWith(40);
+    });
+
+    then("it should update the offset state", () => {
+      expect(instance.setState).toHaveBeenCalledWith({ offset: 40 });
+    });
+  });
+
+  test("onScrollBeginDrag is triggered when isFlatlistScrolled is false", ({
+    given,
+    when,
+    then,
+  }) => {
+    let HomePageWrapper: ShallowWrapper;
+    let instance: HomePage;
+
+    given("the flatlist has not been scrolled", () => {
+      HomePageWrapper = shallow(<HomePage {...props} />);
+      instance = HomePageWrapper.instance() as HomePage;
+      instance.fetchAllPokemon = fetchAllPokemonMock;
+
+      jest.spyOn(instance, "setState").mockImplementation((state) => {
+        instance.state = {
+          ...instance.state,
+          ...(typeof state === "function"
+            ? state(instance.state, props)
+            : state),
+        };
+      });
+
+      instance.setState({ isFlatlistScrolled: false });
+    });
+
+    when("I trigger the onScrollBeginDrag function", () => {
+      instance.onScrollBeginDrag();
+    });
+
+    then("it should update the isFlatlistScrolled state to true", () => {
+      expect(instance.setState).toHaveBeenCalledWith({
+        isFlatlistScrolled: true,
+      });
+    });
+  });
+
+  test("when debounceTimeout is not null", ({ given, when, then }) => {
+    let HomePageWrapper: ShallowWrapper;
+    let instance: HomePage;
+
+    given("debounceTimeout is set", () => {
+      HomePageWrapper = shallow(<HomePage {...props} />);
+      instance = HomePageWrapper.instance() as HomePage;
+
+      instance.debounceTimeout = setTimeout(() => {}, 500);
+
+      jest.spyOn(global, "clearTimeout");
+    });
+
+    when("onChangeText is triggered", () => {
+      instance.onChangeText("new text");
+    });
+
+    then("clearTimeout should be called", () => {
+      expect(clearTimeout).toHaveBeenCalled();
     });
   });
 });

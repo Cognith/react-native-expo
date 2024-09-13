@@ -17,7 +17,7 @@ interface S {
 }
 
 export default class ComponentController extends Component<Props, S> {
-  private debounceTimeout: NodeJS.Timeout | null = null;
+  public debounceTimeout: NodeJS.Timeout | null = null;
 
   constructor(props: Props) {
     super(props);
@@ -86,6 +86,7 @@ export default class ComponentController extends Component<Props, S> {
           });
         }
       } catch (error: any) {
+        console.log("[d] asd");
         console.log("[error] fetchAllPokemon", error);
         this.setState({ isLoading: false });
       }
@@ -113,7 +114,6 @@ export default class ComponentController extends Component<Props, S> {
 
   onChangeText = (text: string) => {
     this.setState({ query: text });
-
     if (this.debounceTimeout) {
       clearTimeout(this.debounceTimeout);
     }
