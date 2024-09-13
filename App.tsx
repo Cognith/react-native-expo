@@ -1,16 +1,16 @@
-import React, { useEffect } from "react";
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer } from '@react-navigation/native';
 import {
   CardStyleInterpolators,
   createStackNavigator,
-} from "@react-navigation/stack";
-import * as SplashScreen from "expo-splash-screen";
-import routeMap from "./src/routes/routeMap";
+} from '@react-navigation/stack';
+import * as SplashScreen from 'expo-splash-screen';
+import React, { useEffect } from 'react';
+import routeMap, { MainStackParams } from './src/routes/routeMap';
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const Stack = createStackNavigator();
+  const Stack = createStackNavigator<MainStackParams>();
 
   useEffect(() => {
     async function hideSplashScreen() {
@@ -24,7 +24,7 @@ export default function RootLayout() {
       independent={true}
       children={
         <Stack.Navigator
-          initialRouteName="Home"
+          initialRouteName='Home'
           screenOptions={{
             headerShown: false,
             cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
