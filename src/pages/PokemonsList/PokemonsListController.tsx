@@ -7,7 +7,7 @@ import { debounce } from '../../utils/debounce';
 interface Props extends Navigation<'Home'> {}
 
 // State
-interface State {
+export interface PokemonsListState {
   pokemons: PokemonData[];
   limit: number;
   offset: number;
@@ -17,7 +17,10 @@ interface State {
   next: string | null; // Determine if more data is available
 }
 
-export default class PokemonsListController extends Component<Props, State> {
+export default class PokemonsListController extends Component<
+  Props,
+  PokemonsListState
+> {
   constructor(props: Props) {
     super(props);
 

@@ -1,4 +1,4 @@
-import { shallow, ShallowWrapper } from 'enzyme';
+import { mount, ReactWrapper, shallow, ShallowWrapper } from 'enzyme';
 import { defineFeature, loadFeature } from 'jest-cucumber';
 import PokemonsListView from '../../PokemonsListView';
 import PokemonService from '../../../../services/PokemonService';
@@ -9,6 +9,8 @@ import {
 } from '../../../../__mocks__/data';
 import { FlatList } from 'react-native';
 import { PokemonData } from '../../../../types';
+import { PokemonsListState } from '../../PokemonsListController';
+import { isLoading } from 'expo-font';
 
 const props = {
   navigation: {
@@ -30,7 +32,8 @@ defineFeature(feature, (test) => {
     'getPokemonDetails',
   );
 
-  let PokemonsListViewWrapper: ShallowWrapper;
+  let PokemonsListShallowWrapper: ShallowWrapper;
+  let PokemonsListReactWrapper: ReactWrapper;
   let instance: PokemonsListView;
 
   beforeEach(() => {
@@ -39,7 +42,7 @@ defineFeature(feature, (test) => {
   });
 
   test('User navigating to Pokemon List Page', ({ given, when, then }) => {
-    given('User on the Pokémon List page', () => {
+    given('User is on the Pokémon List page', () => {
       getPokemonsListService.mockResolvedValue({
         count: 20,
         results: mockPokemonList,
@@ -48,30 +51,30 @@ defineFeature(feature, (test) => {
       });
       getPokemonDetailsService.mockResolvedValue(mockPokemonData);
 
-      PokemonsListViewWrapper = shallow(<PokemonsListView {...props} />);
-      instance = PokemonsListViewWrapper.instance() as PokemonsListView;
+      PokemonsListShallowWrapper = shallow(<PokemonsListView {...props} />);
+      instance = PokemonsListShallowWrapper.instance() as PokemonsListView;
     });
 
-    when('User fully loaded the Pokémon List page', async () => {});
+    when('User loaded the initial state of Pokémon List page', async () => {});
 
-    then('User should see list page', () => {
-      const listPage = PokemonsListViewWrapper.find('[testID="list-page"]');
+    then('User should see the list page', () => {
+      const listPage = PokemonsListShallowWrapper.find('[testID="list-page"]');
       expect(listPage.exists()).toBe(true);
     });
 
-    then('User should see loading', () => {
-      const loader = PokemonsListViewWrapper.find(
+    then('User should see loading indicator', () => {
+      const loader = PokemonsListShallowWrapper.find(
         '[testID="loading-indicator"]',
       );
       expect(loader.exists()).toBe(true);
     });
 
     when('User is waiting for pokemons to load', async () => {
-      PokemonsListViewWrapper.update();
+      PokemonsListShallowWrapper.update();
     });
 
     then('User will see 20 pokemons loaded initially', () => {
-      const pokemonList = PokemonsListViewWrapper.findWhere(
+      const pokemonList = PokemonsListShallowWrapper.findWhere(
         (node) =>
           node.type() === FlatList && node.prop('testID') === 'pokemon-list',
       );
@@ -82,7 +85,7 @@ defineFeature(feature, (test) => {
     });
 
     then('User should see a Pokemon named "Bulbasaur"', () => {
-      const pokemonList = PokemonsListViewWrapper.findWhere(
+      const pokemonList = PokemonsListShallowWrapper.findWhere(
         (node) =>
           node.type() === FlatList && node.prop('testID') === 'pokemon-list',
       );
@@ -94,26 +97,89 @@ defineFeature(feature, (test) => {
     });
   });
 
-  test('User navigating to Pokemon Home Page with error', ({
+  test('User navigating to Pokemon List Page with error', ({
     given,
     when,
     then,
   }) => {
     given('User is on the Pokemon List Page', () => {
       getPokemonsListService.mockRejectedValue(mockError);
-      PokemonsListViewWrapper = shallow(<PokemonsListView {...props} />);
+      PokemonsListShallowWrapper = shallow(<PokemonsListView {...props} />);
+      instance = PokemonsListShallowWrapper.instance() as PokemonsListView;
     });
 
     when('there is an error loading the Pokemon List Page', async () => {
       await instance.fetchPokemons();
-      PokemonsListViewWrapper.update();
+      PokemonsListShallowWrapper.update();
     });
 
     then('User should see a message "Error:"', () => {
-      const errorMessage = PokemonsListViewWrapper.find(
+      const errorMessage = PokemonsListShallowWrapper.find(
         '[testID="error-message"]',
       );
       expect(errorMessage.dive().text()).toContain('Error:');
+    });
+  });
+
+  test('User navigating to Pokemon List Page and scroll down to load more Pokemons', async ({
+    given,
+    when,
+    then,
+  }) => {
+    given('User is on the Pokemon List Page', async () => {
+      getPokemonsListService.mockResolvedValue({
+        count: 20,
+        results: mockPokemonList,
+        next: 'https://pokeapi.co/api/v2/pokemon?limit=20&offset=0',
+        previous: null,
+      });
+      getPokemonDetailsService.mockResolvedValue(mockPokemonData);
+
+      PokemonsListReactWrapper = mount(<PokemonsListView {...props} />);
+      instance = PokemonsListReactWrapper.instance() as PokemonsListView;
+    });
+
+    when('User loaded the initial state of Pokémon List page', async () => {
+      await instance.componentDidMount();
+      PokemonsListReactWrapper.update();
+    });
+
+    then('User should see the list page', () => {
+      const listPage = PokemonsListReactWrapper.find('[testID="list-page"]');
+      expect(listPage.exists()).toBe(true);
+    });
+
+    when(
+      'User sees initial pokemons loaded and scroll down quickly to the end of the list',
+      async () => {
+        PokemonsListReactWrapper.update();
+
+        const pokemonList = PokemonsListReactWrapper.findWhere(
+          (node) =>
+            node.type() === FlatList && node.prop('testID') === 'pokemon-list',
+        );
+        await pokemonList.prop('onEndReached')();
+
+        PokemonsListReactWrapper.update();
+      },
+    );
+
+    then('User should see a loading indicator at the end of the list', () => {
+      const footerLoader = PokemonsListReactWrapper.find(
+        '[testID="load-more-indicator"]',
+      );
+      expect(footerLoader.exists()).toBe(true);
+    });
+
+    when('User is waiting for more pokemons to load', async () => {
+      PokemonsListReactWrapper.update();
+    });
+
+    then('User should see more Pokemons loaded', () => {
+      const pokemonItem = PokemonsListReactWrapper.find(
+        '[testID="pokemon-item"]',
+      );
+      expect(pokemonItem.length).toBeGreaterThan(20);
     });
   });
 });

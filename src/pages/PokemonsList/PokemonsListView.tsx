@@ -52,7 +52,7 @@ export default class PokemonsListView extends PokemonsListController {
               <FlatList
                 testID="pokemon-list"
                 style={styles.list}
-                keyExtractor={({ id }) => id.toString()}
+                keyExtractor={({ id }, index) => `${id}-${index}`}
                 numColumns={2}
                 data={this.filteredPokemonList()}
                 renderItem={({ item }) => (
@@ -67,11 +67,19 @@ export default class PokemonsListView extends PokemonsListController {
                 onEndReachedThreshold={0.5}
                 ListFooterComponent={() =>
                   this.state.isLoading ? (
-                    <PText style={styles.loadMore}>LOADING...</PText>
+                    <PText
+                      testID="load-more-indicator"
+                      style={styles.loadMore}
+                    >
+                      LOADING...
+                    </PText>
                   ) : null
                 }
                 ListEmptyComponent={() => (
-                  <View style={styles.empty}>
+                  <View
+                    testID="empty-view"
+                    style={styles.empty}
+                  >
                     <PText>No Pokemon is found</PText>
                   </View>
                 )}
