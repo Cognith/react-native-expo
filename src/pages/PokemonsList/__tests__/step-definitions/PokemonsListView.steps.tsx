@@ -50,14 +50,15 @@ defineFeature(feature, (test) => {
     when,
     then,
   }) => {
-    given('User is on the Pokemon List page', () => {
+    given('User is on the Pokemon List page', async () => {
       getPokemonsListService.mockResolvedValue(
         mockPokemonResponse(mockPokemonList),
       );
       getPokemonDetailsService.mockImplementation(mockPokemonListUnique);
 
-      PokemonsListReactWrapper = mount(<PokemonsListView {...props} />);
-      instance = PokemonsListReactWrapper.instance() as PokemonsListView;
+      await act(async () => {
+        PokemonsListReactWrapper = mount(<PokemonsListView {...props} />);
+      });
     });
 
     when('initially loading the Pokemon List page', async () => {});
@@ -75,8 +76,9 @@ defineFeature(feature, (test) => {
     });
 
     when('the first list of pokemons are loaded', async () => {
-      await instance.componentDidMount();
-      PokemonsListReactWrapper.update();
+      await act(async () => {
+        PokemonsListReactWrapper.update();
+      });
     });
 
     let pokemonItems: ReactWrapper;
