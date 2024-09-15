@@ -1,5 +1,6 @@
 import { mount, ReactWrapper, shallow, ShallowWrapper } from 'enzyme';
 import { defineFeature, loadFeature } from 'jest-cucumber';
+import { act } from 'react-dom/test-utils';
 import PokemonsListView from '../../PokemonsListView';
 import PokemonService from '../../../../services/PokemonService';
 import {
@@ -9,7 +10,6 @@ import {
   mockPokemonListUnique,
 } from '../../../../__mocks__/data';
 import { FlatList, Pressable, TextInput } from 'react-native';
-import { PokemonData } from '../../../../types';
 import { mockPokemonResponse } from '../../../../__mocks__/data/mockData';
 import { PokemonCard, PText } from '../../../../components';
 
@@ -44,8 +44,12 @@ defineFeature(feature, (test) => {
     jest.clearAllMocks();
   });
 
-  // Test if Pokemon List Page is loaded
-  test('User navigating to Pokemon List Page', ({ given, when, then }) => {
+  // Test when Pokemon List Page successfully loaded
+  test('Pokemon List Page loading data successfully', ({
+    given,
+    when,
+    then,
+  }) => {
     given('User is on the Pokemon List page', () => {
       getPokemonsListService.mockResolvedValue(
         mockPokemonResponse(mockPokemonList),
@@ -101,31 +105,32 @@ defineFeature(feature, (test) => {
     });
   });
 
-  test('User navigating to Pokemon List Page with error', ({
-    given,
-    when,
-    then,
-  }) => {
-    given('User is on the Pokemon List Page', () => {
+  // Test when Pokemon List Page fails to load the data
+  test('Pokemon List Page loaded with error', ({ given, when, then }) => {
+    given('User is on the Pokemon List Page', async () => {
       getPokemonsListService.mockRejectedValue(mockError);
-      PokemonsListShallowWrapper = shallow(<PokemonsListView {...props} />);
-      instance = PokemonsListShallowWrapper.instance() as PokemonsListView;
+      await act(async () => {
+        PokemonsListReactWrapper = mount(<PokemonsListView {...props} />);
+      });
     });
 
     when('there is an error loading the Pokemon List Page', async () => {
-      await instance.fetchPokemons();
-      PokemonsListShallowWrapper.update();
+      await act(async () => {
+        PokemonsListReactWrapper.update();
+      });
     });
 
-    then('User should see a message "Error:"', () => {
-      const errorMessage = PokemonsListShallowWrapper.find(
-        '[testID="error-message"]',
+    then('User should see a message with "Error:"', () => {
+      const errorMessage = PokemonsListReactWrapper.findWhere(
+        (node) => node.is(PText) && node.prop('testID') === 'error-message',
       );
-      expect(errorMessage.dive().text()).toContain('Error:');
+      expect(errorMessage.exists()).toBe(true);
+      expect(errorMessage.text()).toContain('Error:');
     });
   });
 
-  test('User navigating to Pokemon List Page and scroll down to load more Pokemons', async ({
+  // Test Pokemon List Page infinite scroll feature
+  test('Scrolling down to load more Pokemons in Pokemon List Page', async ({
     given,
     when,
     then,
@@ -188,7 +193,8 @@ defineFeature(feature, (test) => {
     });
   });
 
-  test('User searching for a Pokemon in Pokemon List Page', async ({
+  // Test Pokemon List Page search feature
+  test('Searching for Pokemons in Pokemon List Page', async ({
     given,
     when,
     then,
@@ -242,7 +248,8 @@ defineFeature(feature, (test) => {
     });
   });
 
-  test('User navigates to the Pokemon Details page from Pokemon List Page', async ({
+  // Test navigating to a Pokemon's Details Page from Pokemon List Page
+  test("Navigate to a Pokemon's Details page from the Pokemon List Page", async ({
     given,
     when,
     then,
