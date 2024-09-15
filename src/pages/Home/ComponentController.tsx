@@ -54,39 +54,26 @@ export default class ComponentController extends Component<Props, S> {
     let pokemonArray: Pokemon[] = [];
 
     if (!isLoading) {
+      console.log("Fetching All Pokemon ...");
       try {
-        if (!isLoading) this.setState({ isLoading: true });
+        this.setState({ isLoading: true });
         const pokemonListJson = await getPokemonList(offset);
-        if (pokemonListJson.results.length > 0) {
-          const pokemonPromises = pokemonListJson.results.map(
-            async (item: any) => {
-              try {
-                const pokemonJson = await getPokemon(item.name);
-                const newPokemon = pokemonTransformer(pokemonJson);
-                return newPokemon;
-              } catch (error) {
-                console.log(
-                  "[error] Fetching Pokemon inside fetchAllPokemon",
-                  error
-                );
-                this.setState({ isLoading: false });
-                return null;
-              }
-            }
-          );
-
-          const resolvedPokemonArray = await Promise.all(pokemonPromises);
-          pokemonArray = resolvedPokemonArray.filter(
-            (pokemon) => pokemon !== null
-          );
-
-          this.setState({
-            isLoading: false,
-            pokemon: [...this.state.pokemon, ...pokemonArray],
-          });
-        }
+        const pokemonPromises = pokemonListJson.results.map(
+          async (item: any) => {
+            const pokemonJson = await getPokemon(item.name);
+            const newPokemon = pokemonTransformer(pokemonJson);
+            return newPokemon;
+          }
+        );
+        const resolvedPokemonArray = await Promise.all(pokemonPromises);
+        pokemonArray = resolvedPokemonArray.filter(
+          (pokemon) => pokemon !== null
+        );
+        this.setState({
+          isLoading: false,
+          pokemon: [...this.state.pokemon, ...pokemonArray],
+        });
       } catch (error: any) {
-        console.log("[d] asd");
         console.log("[error] fetchAllPokemon", error);
         this.setState({ isLoading: false });
       }
@@ -95,8 +82,7 @@ export default class ComponentController extends Component<Props, S> {
 
   fetchPokemon = async (query: string) => {
     try {
-      const { isLoading } = this.state;
-      if (!isLoading) this.setState({ isLoading: true });
+      this.setState({ isLoading: true });
 
       const pokemonJson = await getPokemon(query);
       const newPokemon = pokemonTransformer(pokemonJson);

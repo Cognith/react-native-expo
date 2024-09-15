@@ -20,7 +20,7 @@ interface Options {
 }
 
 export default class ComponentController extends Component<Props, S> {
-  private debounceTimeout: NodeJS.Timeout | null = null;
+  public debounceTimeout: NodeJS.Timeout | null = null;
 
   constructor(props: Props) {
     super(props);
@@ -35,7 +35,7 @@ export default class ComponentController extends Component<Props, S> {
 
   componentDidMount = async () => {
     const { params } = this.props.route;
-    this.fetchPokemon({ id: params?.pokemon?.id });
+    this.fetchPokemon({ id: params.pokemon.id });
   };
 
   componentDidUpdate(prevProps: Props, prevState: S) {
@@ -51,17 +51,13 @@ export default class ComponentController extends Component<Props, S> {
 
   fetchPokemonFromParams = () => {
     const { params } = this.props.route;
-    if (params?.pokemon?.id) {
-      const formattedStats = this.formattingStats(params?.pokemon?.stats);
-      this.setState({ pokemon: { ...params?.pokemon, stats: formattedStats } });
-    }
+    const formattedStats = this.formattingStats(params.pokemon.stats);
+    this.setState({ pokemon: { ...params.pokemon, stats: formattedStats } });
   };
 
   fetchPokemon = async (options: Options) => {
     const { isLoading } = this.state;
-    const url = options?.id
-      ? `https://pokeapi.co/api/v2/pokemon/${options?.id}`
-      : `https://pokeapi.co/api/v2/pokemon/${options?.name?.toLowerCase()}`;
+    const url = this.generatePokemonURL(options);
 
     try {
       console.log("Fetching Pokemon ...");
@@ -79,6 +75,11 @@ export default class ComponentController extends Component<Props, S> {
       console.log("[error] fetchPokemon", error);
       this.setState({ isLoading: false, pokemon: null });
     }
+  };
+
+  generatePokemonURL = (options: Options) => {
+    if (options.id) return `https://pokeapi.co/api/v2/pokemon/${options.id}`;
+    return `https://pokeapi.co/api/v2/pokemon/${options.name}`;
   };
 
   formattingStats = (stats: any) => {

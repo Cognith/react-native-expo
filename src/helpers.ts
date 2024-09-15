@@ -1,6 +1,6 @@
 import { Pokemon, PokemonStat, PokemonType } from "./types";
 
-export const pokemonTransformer = (pokemon: any) => {
+const pokemonTransformer = (pokemon: any) => {
   let pokemonTypes: PokemonType[] = [];
   pokemon.types.map((item: any) => {
     pokemonTypes.push({ name: item.type.name });
@@ -26,3 +26,5 @@ export const pokemonTransformer = (pokemon: any) => {
 
   return newPokemon;
 };
+
+export { pokemonTransformer };

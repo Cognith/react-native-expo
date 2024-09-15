@@ -31,3 +31,34 @@ Feature: Pokemon List
         Given debounceTimeout is set
         When onChangeText is triggered
         Then clearTimeout should be called
+
+    Scenario: User fetch error to Pokemon Home Page
+        Given User on the Pokemon Home page
+        When User fully loaded Pokemon home page
+        Then User fetch error to Pokemon Home Page
+
+    Scenario: fetch Pokemon when query is set
+        Given User on the Pokemon Home page
+        When Query is set
+        Then fetchPokemon will be triggered
+
+    Scenario: fetch Pokemon when query is not set
+        Given User on the Pokemon Home page
+        When Query is not set
+        Then fetchAllPokemon will be triggered
+
+    Scenario: Fetching a Pokemon successfully
+        Given the component is mounted
+        When I fetch a Pokemon with a valid query
+        Then the pokemon should be set in the state
+
+    Scenario: Failing to fetch a Pokemon
+        Given the component is mounted
+        When the fetch fails
+        Then an error should be logged
+        And the state should reflect the error
+
+    Scenario: Do not fetch pokemon list when isLoading is true
+        Given the component is mounted
+        When isLoading is true
+        Then the app will not fetch the pokemon list
