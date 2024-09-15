@@ -6,9 +6,12 @@ import {
   mockError,
   mockPokemonData,
   mockPokemonList,
+  mockPokemonListUnique,
 } from '../../../../__mocks__/data';
-import { FlatList, TextInput } from 'react-native';
+import { FlatList, Pressable, TextInput } from 'react-native';
 import { PokemonData } from '../../../../types';
+import { mockPokemonResponse } from '../../../../__mocks__/data/mockData';
+import { PokemonCard, PText } from '../../../../components';
 
 const props = {
   navigation: {
@@ -41,59 +44,60 @@ defineFeature(feature, (test) => {
     jest.clearAllMocks();
   });
 
+  // Test if Pokemon List Page is loaded
   test('User navigating to Pokemon List Page', ({ given, when, then }) => {
     given('User is on the Pokemon List page', () => {
-      getPokemonsListService.mockResolvedValue({
-        count: 20,
-        results: mockPokemonList,
-        next: 'https://pokeapi.co/api/v2/pokemon?limit=20&offset=0',
-        previous: null,
-      });
-      getPokemonDetailsService.mockResolvedValue(mockPokemonData);
+      getPokemonsListService.mockResolvedValue(
+        mockPokemonResponse(mockPokemonList),
+      );
+      getPokemonDetailsService.mockImplementation(mockPokemonListUnique);
 
-      PokemonsListShallowWrapper = shallow(<PokemonsListView {...props} />);
-      instance = PokemonsListShallowWrapper.instance() as PokemonsListView;
+      PokemonsListReactWrapper = mount(<PokemonsListView {...props} />);
+      instance = PokemonsListReactWrapper.instance() as PokemonsListView;
     });
 
-    when('User loaded the initial state of Pokemon List page', async () => {});
+    when('initially loading the Pokemon List page', async () => {});
 
     then('User should see the list page', () => {
-      const listPage = PokemonsListShallowWrapper.find('[testID="list-page"]');
+      const listPage = PokemonsListReactWrapper.find('[testID="list-page"]');
       expect(listPage.exists()).toBe(true);
     });
 
     then('User should see loading indicator', () => {
-      const loader = PokemonsListShallowWrapper.find(
+      const loader = PokemonsListReactWrapper.find(
         '[testID="loading-indicator"]',
       );
       expect(loader.exists()).toBe(true);
     });
 
-    when('User is waiting for pokemons to load', async () => {
-      PokemonsListShallowWrapper.update();
+    when('the first list of pokemons are loaded', async () => {
+      await instance.componentDidMount();
+      PokemonsListReactWrapper.update();
     });
 
-    then('User will see 20 pokemons loaded initially', () => {
-      const pokemonList = PokemonsListShallowWrapper.findWhere(
-        (node) =>
-          node.type() === FlatList && node.prop('testID') === 'pokemon-list',
-      );
+    let pokemonItems: ReactWrapper;
 
-      // Access the data prop passed to FlatList
-      const pokemonItemData = pokemonList.prop('data') as PokemonData[];
-      expect(pokemonItemData.length).toEqual(20);
+    then('User should see 20 pokemons loaded initially', () => {
+      const pokemonList = PokemonsListReactWrapper.findWhere(
+        (node) => node.is(FlatList) && node.prop('testID') === 'pokemon-list',
+      );
+      expect(pokemonList.exists()).toBe(true);
+
+      pokemonItems = pokemonList
+        .find(PokemonCard)
+        .findWhere(
+          (node) =>
+            node.is(Pressable) && node.prop('testID').includes('pokemon-card'),
+        );
+      expect(pokemonItems.exists()).toBe(true);
+      expect(pokemonItems.length).toEqual(20);
     });
 
-    then('User should see a Pokemon named "Bulbasaur"', () => {
-      const pokemonList = PokemonsListShallowWrapper.findWhere(
-        (node) =>
-          node.type() === FlatList && node.prop('testID') === 'pokemon-list',
+    then('User should see a Pokemon named "pokemon-1"', () => {
+      const specificItem = pokemonItems.findWhere(
+        (node) => node.is(PText) && node.text().toLowerCase() === 'pokemon-1',
       );
-      const pokemonItemData = pokemonList.prop('data') as PokemonData[];
-      const hasBulbasaur = pokemonItemData.some(
-        (pokemon) => pokemon.name === 'Bulbasaur'.toLowerCase(),
-      );
-      expect(hasBulbasaur).toBe(true);
+      expect(specificItem.exists()).toBe(true);
     });
   });
 

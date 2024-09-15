@@ -1,3 +1,3 @@
-import { mockError, mockPokemonData, mockPokemonList, } from "./mockData";
+import { mockError, mockPokemonData, mockPokemonList, mockPokemonListUnique } from "./mockData";
 
-export { mockPokemonData, mockPokemonList, mockError };
+export { mockPokemonData, mockPokemonList, mockPokemonListUnique, mockError };

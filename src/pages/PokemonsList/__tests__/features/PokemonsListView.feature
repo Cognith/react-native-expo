@@ -2,12 +2,12 @@ Feature: Pokemon List
 
   Scenario: User navigating to Pokemon List Page
     Given User is on the Pokemon List page
-    When User loaded the initial state of Pokemon List page
+    When initially loading the Pokemon List page
     Then User should see the list page
     Then User should see loading indicator
-    When User is waiting for pokemons to load
-    Then User will see 20 pokemons loaded initially
-    Then User should see a Pokemon named "Bulbasaur"
+    When the first list of pokemons are loaded
+    Then User should see 20 pokemons loaded initially
+    Then User should see a Pokemon named "pokemon-1"
 
   Scenario: User navigating to Pokemon List Page with error
     Given User is on the Pokemon List Page

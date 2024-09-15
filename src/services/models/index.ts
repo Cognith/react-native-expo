@@ -1,4 +1,4 @@
-import { PokemonsResponseModel } from "./PokemonResponseModel";
+import { PokemonDataLinkModel, PokemonsResponseModel } from "./PokemonResponseModel";
 import { PokemonModel } from "./PokemonModel";
 
-export type { PokemonsResponseModel, PokemonModel };
+export type { PokemonsResponseModel, PokemonDataLinkModel, PokemonModel };

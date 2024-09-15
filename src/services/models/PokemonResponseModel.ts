@@ -5,7 +5,7 @@ export interface PokemonsResponseModel {
   results: PokemonDataLinkModel[];
 }
 
-interface PokemonDataLinkModel {
+export interface PokemonDataLinkModel {
   name: string;
   url: string;
 }
