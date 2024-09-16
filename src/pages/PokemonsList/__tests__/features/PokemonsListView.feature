@@ -3,8 +3,8 @@ Feature: Pokemon List
   Scenario: Pokemon List Page loading data successfully
     Given User is on the Pokemon List page
     When initially loading the Pokemon List page
-    Then User should see the list page
-    Then User should see loading indicator
+    Then User should see the list page screen
+    Then User should see the loading indicator
     When the first list of pokemons are loaded
     Then User should see 20 pokemons loaded initially
     Then User should see a Pokemon named "pokemon-1"
@@ -16,11 +16,9 @@ Feature: Pokemon List
 
   Scenario: Scrolling down to load more Pokemons in Pokemon List Page
     Given User is on the Pokemon List Page
-    When User loaded the initial state of Pokemon List page
-    Then User should see the list page
-    When User sees initial pokemons loaded and scroll down quickly to the end of the list
+    When the initial pokemons have loaded and User scrolls down quickly to the end of the list
     Then User should see a loading indicator at the end of the list
-    When User is waiting for more pokemons to load
+    When more pokemons have successfully loaded
     Then User should see more Pokemons loaded
 
   Scenario: Searching for Pokemons in Pokemon List Page

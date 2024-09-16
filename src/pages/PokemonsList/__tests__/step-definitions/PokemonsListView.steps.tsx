@@ -44,7 +44,9 @@ defineFeature(feature, (test) => {
     jest.clearAllMocks();
   });
 
-  // Test when Pokemon List Page successfully loaded
+  /**
+   * Test when Pokemon List Page successfully loaded
+   */
   test('Pokemon List Page loading data successfully', ({
     given,
     when,
@@ -56,19 +58,17 @@ defineFeature(feature, (test) => {
       );
       getPokemonDetailsService.mockImplementation(mockPokemonListUnique);
 
-      await act(async () => {
-        PokemonsListReactWrapper = mount(<PokemonsListView {...props} />);
-      });
+      PokemonsListReactWrapper = mount(<PokemonsListView {...props} />);
     });
 
     when('initially loading the Pokemon List page', async () => {});
 
-    then('User should see the list page', () => {
+    then('User should see the list page screen', () => {
       const listPage = PokemonsListReactWrapper.find('[testID="list-page"]');
       expect(listPage.exists()).toBe(true);
     });
 
-    then('User should see loading indicator', () => {
+    then('User should see the loading indicator', () => {
       const loader = PokemonsListReactWrapper.find(
         '[testID="loading-indicator"]',
       );
@@ -76,9 +76,7 @@ defineFeature(feature, (test) => {
     });
 
     when('the first list of pokemons are loaded', async () => {
-      await act(async () => {
-        PokemonsListReactWrapper.update();
-      });
+      PokemonsListReactWrapper.update();
     });
 
     let pokemonItems: ReactWrapper;
@@ -107,19 +105,17 @@ defineFeature(feature, (test) => {
     });
   });
 
-  // Test when Pokemon List Page fails to load the data
+  /**
+   * Test when Pokemon List Page fails to load the data
+   */
   test('Pokemon List Page loaded with error', ({ given, when, then }) => {
     given('User is on the Pokemon List Page', async () => {
       getPokemonsListService.mockRejectedValue(mockError);
-      await act(async () => {
-        PokemonsListReactWrapper = mount(<PokemonsListView {...props} />);
-      });
+      PokemonsListReactWrapper = mount(<PokemonsListView {...props} />);
     });
 
     when('there is an error loading the Pokemon List Page', async () => {
-      await act(async () => {
-        PokemonsListReactWrapper.update();
-      });
+      PokemonsListReactWrapper.update();
     });
 
     then('User should see a message with "Error:"', () => {
@@ -131,45 +127,40 @@ defineFeature(feature, (test) => {
     });
   });
 
-  // Test Pokemon List Page infinite scroll feature
+  /**
+   * Test Pokemon List Page infinite scroll feature
+   */
   test('Scrolling down to load more Pokemons in Pokemon List Page', async ({
     given,
     when,
     then,
   }) => {
     given('User is on the Pokemon List Page', async () => {
-      getPokemonsListService.mockResolvedValue({
-        count: 20,
-        results: mockPokemonList,
-        next: 'https://pokeapi.co/api/v2/pokemon?limit=20&offset=0',
-        previous: null,
-      });
-      getPokemonDetailsService.mockResolvedValue(mockPokemonData);
+      getPokemonsListService.mockResolvedValue(
+        mockPokemonResponse(mockPokemonList),
+      );
+      getPokemonDetailsService.mockImplementation(mockPokemonListUnique);
 
       PokemonsListReactWrapper = mount(<PokemonsListView {...props} />);
-      instance = PokemonsListReactWrapper.instance() as PokemonsListView;
-    });
 
-    when('User loaded the initial state of Pokemon List page', async () => {
-      await instance.componentDidMount();
-      PokemonsListReactWrapper.update();
-    });
-
-    then('User should see the list page', () => {
-      const listPage = PokemonsListReactWrapper.find('[testID="list-page"]');
-      expect(listPage.exists()).toBe(true);
+      // Ensure to bypass the initial loading state because it is already
+      // checked in another scenario.
+      await act(async () => {
+        PokemonsListReactWrapper.update();
+      });
     });
 
     when(
-      'User sees initial pokemons loaded and scroll down quickly to the end of the list',
+      'the initial pokemons have loaded and User scrolls down quickly to the end of the list',
       async () => {
         PokemonsListReactWrapper.update();
 
         const pokemonList = PokemonsListReactWrapper.findWhere(
-          (node) =>
-            node.type() === FlatList && node.prop('testID') === 'pokemon-list',
+          (node) => node.is(FlatList) && node.prop('testID') === 'pokemon-list',
         );
-        await pokemonList.prop('onEndReached')();
+        expect(pokemonList.exists()).toBe(true);
+
+        await pokemonList.prop('onEndReached')?.({ distanceFromEnd: 0 });
 
         PokemonsListReactWrapper.update();
       },
@@ -182,7 +173,7 @@ defineFeature(feature, (test) => {
       expect(footerLoader.exists()).toBe(true);
     });
 
-    when('User is waiting for more pokemons to load', async () => {
+    when('more pokemons have successfully loaded', async () => {
       PokemonsListReactWrapper.update();
     });
 
@@ -195,7 +186,9 @@ defineFeature(feature, (test) => {
     });
   });
 
-  // Test Pokemon List Page search feature
+  /**
+   * Test Pokemon List Page search feature
+   */
   test('Searching for Pokemons in Pokemon List Page', async ({
     given,
     when,
