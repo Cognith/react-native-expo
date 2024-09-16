@@ -62,6 +62,18 @@ export default class PokemonListPage extends PokemonListController {
     );
   };
 
+  renderEmptyComponent = () => {
+    if (this.state.isError) {
+      return (
+        <View>
+          <Text>Something wrong! Please try again</Text>
+        </View>
+      );
+    } else {
+      return null;
+    }
+  };
+
   renderFooterComponent = () => {
     if (this.state.pokemons.length > 0 && this.state.isLoading) {
       return (
@@ -97,6 +109,7 @@ export default class PokemonListPage extends PokemonListController {
             onEndReachedThreshold={0.3}
             ListHeaderComponent={this.renderHeaderComponent}
             ListFooterComponent={this.renderFooterComponent}
+            ListEmptyComponent={this.renderEmptyComponent}
             stickyHeaderIndices={[0]}
           />
         </SafeAreaView>

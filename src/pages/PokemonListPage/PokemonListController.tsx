@@ -12,6 +12,7 @@ interface PokemonListControllerState {
   filteredPokemons: IPokemon[];
   searchFilter: string;
   isLoading: boolean;
+  isError: boolean;
   offsets: number;
   hasNextPage: boolean;
 }
@@ -28,6 +29,7 @@ export default class PokemonListController extends Component<
 
   initialState = {
     isLoading: false,
+    isError: false,
     searchFilter: '',
     filteredPokemons: [],
     pokemons: [],
@@ -50,7 +52,9 @@ export default class PokemonListController extends Component<
 
     this.setState({
       isLoading: true,
+      isError: false,
     });
+    let isError = false;
 
     try {
       const { results, next } = await PokemonServices.getPokemons(offsets);
@@ -69,12 +73,13 @@ export default class PokemonListController extends Component<
       offsets += 20;
       hasNextPage = !!next;
     } catch (err) {
-      console.log('error fetchPokemonList');
+      isError = true;
     } finally {
       this.setState((prev) => {
         const _pokemons = [...prev.pokemons, ...pokemons];
         return {
           isLoading: false,
+          isError,
           pokemons: _pokemons,
           filteredPokemons: !prev.searchFilter
             ? _pokemons

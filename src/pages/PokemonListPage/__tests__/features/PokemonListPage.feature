@@ -10,7 +10,7 @@ Feature: Pokemon List
     Scenario: Pokemon List infinite scroll
         Given I am on the PokemonListPage with pokemon list loaded
         When I scroll down
-        Then it should load more pokemon
+        Then it should load more pokemon and fetch next page
         Then I should see it the more pokemon is loaded on the screen
 
     Scenario: Search Pokemon List
@@ -23,7 +23,12 @@ Feature: Pokemon List
         When Refresh List
         Then should fetch and refresh the pokemon list
 
-     Scenario: Press on Pokemon Card
+    Scenario: Press on Pokemon Card
         Given I am on the PokemonListPage with pokemon list
         When Press on one of the pokemon card
         Then should navigate to Pokemon Detail screen
+    
+    Scenario: Get Pokemon List Error
+        Given I am on the PokemonList Page
+        When I failed to load PokemonList Page
+        Then I should see error view 

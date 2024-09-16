@@ -54,8 +54,7 @@ defineFeature(feature, (test) => {
   });
 
   afterEach(() => {
-    mockGetPokemons.mockClear();
-    mockGetPokemonDetail.mockClear();
+    jest.clearAllMocks();
   });
 
   test('Render Pokemon List', ({ given, when, then }) => {
@@ -103,6 +102,9 @@ defineFeature(feature, (test) => {
     });
 
     when('I scroll down', async () => {
+      PokemonListPageWrapper.find(FlatList)
+        .props()
+        .onEndReached?.({ distanceFromEnd: 0 });
       PokemonListPageWrapper.find(FlatList)
         .props()
         .onEndReached?.({ distanceFromEnd: 0 });
@@ -199,6 +201,27 @@ defineFeature(feature, (test) => {
       expect(mockNavigate).toBeCalledWith('PokemonDetail', {
         id: getPokemonDetailTestData.id,
       });
+    });
+  });
+
+  test('Get Pokemon List Error', ({ given, when, then }) => {
+    let PokemonListPageWrapper: ReactWrapper;
+    let instance: PokemonListPage;
+
+    given('I am on the PokemonList Page', () => {
+      jest
+        .spyOn(PokemonServices, 'getPokemons')
+        .mockImplementationOnce(jest.fn().mockRejectedValue(false));
+      PokemonListPageWrapper = mount(<PokemonListPage {...props} />);
+      instance = PokemonListPageWrapper.instance() as PokemonListPage;
+    });
+
+    when('I failed to load PokemonList Page', async () => {
+      await runAllPromises();
+    });
+
+    then('I should see error view', () => {
+      expect(instance.state.isError).toBe(true);
     });
   });
 });

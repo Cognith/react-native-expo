@@ -11,3 +11,8 @@ Feature: Pokemon List
         When press on link icon
         Then should go to url
 
+     Scenario: Should show alert if can not open url generation link
+        Given I am on the PokemonDetail Page with pokemon detail loaded and generation url link undefined
+        When press on link icon
+        Then should show alert 
+

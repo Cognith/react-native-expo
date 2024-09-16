@@ -27,7 +27,6 @@ let mockGetPokemonDetailSpy: jest.SpyInstance<
   Promise<IPokemon>,
   [pokemonId: string | number]
 >;
-// jest.mock('@expo/vector-icons/Ionicons', () => 'Icon');
 
 const mockGetPokemonDetail = jest.fn((id) => Promise.resolve(testData(id)));
 
@@ -40,7 +39,6 @@ defineFeature(feature, (test) => {
   });
 
   afterEach(() => {
-    mockGetPokemonDetail.mockClear();
     jest.clearAllMocks();
   });
 
@@ -81,12 +79,13 @@ defineFeature(feature, (test) => {
     let PokemonDetailPageWrapper: ReactWrapper;
     let instance: PokemonDetailPage;
     const mockOpenUrl = jest.fn();
-    jest.spyOn(Linking, 'openURL').mockImplementation(mockOpenUrl);
+
     const url = testData(1).generationUrl;
 
     given(
       'I am on the PokemonDetail Page with pokemon detail loaded and generation url link exist',
       async () => {
+        jest.spyOn(Linking, 'openURL').mockImplementationOnce(mockOpenUrl);
         PokemonDetailPageWrapper = mount(<PokemonDetailPage {...props} />);
         instance = PokemonDetailPageWrapper.instance() as PokemonDetailPage;
         await runAllPromises();
@@ -99,6 +98,37 @@ defineFeature(feature, (test) => {
     });
 
     then('should go to url', () => {
+      expect(mockOpenUrl).toHaveBeenCalledWith(url);
+    });
+  });
+
+  test('Should show alert if can not open url generation link', ({
+    given,
+    when,
+    then,
+  }) => {
+    let PokemonDetailPageWrapper: ReactWrapper;
+    let instance: PokemonDetailPage;
+    const mockOpenUrl = jest.fn().mockResolvedValue(false);
+
+    const url = 'undefined';
+
+    given(
+      'I am on the PokemonDetail Page with pokemon detail loaded and generation url link undefined',
+      async () => {
+        jest.spyOn(Linking, 'canOpenURL').mockImplementationOnce(mockOpenUrl);
+        PokemonDetailPageWrapper = mount(<PokemonDetailPage {...props} />);
+        instance = PokemonDetailPageWrapper.instance() as PokemonDetailPage;
+        await runAllPromises();
+      }
+    );
+
+    when('press on link icon', async () => {
+      await instance.goToLink(url)();
+      await runAllPromises();
+    });
+
+    then('should show alert', () => {
       expect(mockOpenUrl).toHaveBeenCalledWith(url);
     });
   });
