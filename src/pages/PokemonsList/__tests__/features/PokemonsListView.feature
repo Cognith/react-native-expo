@@ -16,7 +16,9 @@ Feature: Pokemon List
 
   Scenario: Scrolling down to load more Pokemons in Pokemon List Page
     Given User is on the Pokemon List Page
-    When the initial pokemons have loaded and User scrolls down quickly to the end of the list
+    When the first list of pokemons are loaded
+    Then User should see 20 pokemons loaded initially
+    When User scrolls down quickly to the end of the list
     Then User should see a loading indicator at the end of the list
     When more pokemons have successfully loaded
     Then User should see more Pokemons loaded

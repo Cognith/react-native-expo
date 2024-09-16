@@ -150,21 +150,34 @@ defineFeature(feature, (test) => {
       });
     });
 
-    when(
-      'the initial pokemons have loaded and User scrolls down quickly to the end of the list',
-      async () => {
-        PokemonsListReactWrapper.update();
+    when('the first list of pokemons are loaded', async () => {
+      PokemonsListReactWrapper.update();
+    });
 
-        const pokemonList = PokemonsListReactWrapper.findWhere(
-          (node) => node.is(FlatList) && node.prop('testID') === 'pokemon-list',
+    let pokemonList: ReactWrapper;
+    let pokemonItems: ReactWrapper;
+
+    then('User should see 20 pokemons loaded initially', () => {
+      pokemonList = PokemonsListReactWrapper.findWhere(
+        (node) => node.is(FlatList) && node.prop('testID') === 'pokemon-list',
+      );
+      expect(pokemonList.exists()).toBe(true);
+
+      pokemonItems = pokemonList
+        .find(PokemonCard)
+        .findWhere(
+          (node) =>
+            node.is(Pressable) && node.prop('testID').includes('pokemon-card'),
         );
-        expect(pokemonList.exists()).toBe(true);
+      expect(pokemonItems.exists()).toBe(true);
+      expect(pokemonItems.length).toEqual(20);
+    });
 
-        await pokemonList.prop('onEndReached')?.({ distanceFromEnd: 0 });
-
-        PokemonsListReactWrapper.update();
-      },
-    );
+    when('User scrolls down quickly to the end of the list', async () => {
+      const onEndReached = pokemonList.prop('onEndReached') as () => void;
+      onEndReached();
+      PokemonsListReactWrapper.update();
+    });
 
     then('User should see a loading indicator at the end of the list', () => {
       const footerLoader = PokemonsListReactWrapper.find(
