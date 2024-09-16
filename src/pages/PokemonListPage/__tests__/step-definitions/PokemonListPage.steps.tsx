@@ -112,7 +112,7 @@ defineFeature(feature, (test) => {
       PokemonListPageWrapper.update();
     });
 
-    then('it should load more pokemon', async () => {
+    then('it should load more pokemon and fetch next page', async () => {
       expect(mockGetPokemons).toHaveBeenCalledTimes(2);
       instance = PokemonListPageWrapper.instance() as PokemonListPage;
     });
@@ -126,6 +126,28 @@ defineFeature(feature, (test) => {
         );
       }
     );
+  });
+
+  test('Show Loading Footer', ({ given, when, then }) => {
+    let PokemonListPageWrapper: ReactWrapper;
+    let instance: PokemonListPage;
+
+    given('I am on the PokemonListPage with pokemon list loaded', async () => {
+      PokemonListPageWrapper = mount(<PokemonListPage {...props} />);
+      instance = PokemonListPageWrapper.instance() as PokemonListPage;
+      await runAllPromises();
+      PokemonListPageWrapper.update();
+    });
+
+    when('loading next page', async () => {
+      instance.setState({
+        isLoading: true,
+      });
+    });
+
+    then('it should show loading footer', async () => {
+      PokemonListPageWrapper.update();
+    });
   });
 
   test('Search Pokemon List', ({ given, when, then }) => {

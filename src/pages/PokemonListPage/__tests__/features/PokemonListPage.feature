@@ -13,6 +13,11 @@ Feature: Pokemon List
         Then it should load more pokemon and fetch next page
         Then I should see it the more pokemon is loaded on the screen
 
+    Scenario: Show Loading Footer
+        Given I am on the PokemonListPage with pokemon list loaded
+        When loading next page
+        Then it should show loading footer
+
     Scenario: Search Pokemon List
         Given I am on the PokemonListPage with pokemon list
         When I search Pokemon by name
@@ -32,3 +37,4 @@ Feature: Pokemon List
         Given I am on the PokemonList Page
         When I failed to load PokemonList Page
         Then I should see error view 
+    
