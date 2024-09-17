@@ -5,7 +5,6 @@ import { PokemonData } from '../types';
 
 // Props
 interface Props {
-  indexData?: string | undefined;
   data: PokemonData;
   onPress: (data: PokemonData) => void;
 }
@@ -20,10 +19,7 @@ export default class PokemonCard extends Component<Props> {
 
     return (
       <Pressable
-        testID={
-          'pokemon-card' +
-          (this.props.indexData ? '_' + this.props.indexData : '')
-        }
+        testID={'pokemon-card_' + id}
         onPress={() => this.props.onPress(this.props.data)}
         style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
       >

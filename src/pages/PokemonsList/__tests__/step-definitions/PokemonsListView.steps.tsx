@@ -345,13 +345,10 @@ defineFeature(feature, (test) => {
     then,
   }) => {
     given('User is on the Pokemon List Page', async () => {
-      getPokemonsListService.mockResolvedValue({
-        count: 20,
-        results: mockPokemonList(20),
-        next: 'https://pokeapi.co/api/v2/pokemon?limit=20&offset=0',
-        previous: null,
-      });
-      getPokemonDetailsService.mockResolvedValue(mockPokemonData);
+      getPokemonsListService.mockResolvedValue(
+        mockPokemonResponse(mockPokemonList(20), 20),
+      );
+      getPokemonDetailsService.mockImplementation(mockPokemonListUnique);
 
       PokemonsListReactWrapper = mount(<PokemonsListView {...props} />);
       instance = PokemonsListReactWrapper.instance() as PokemonsListView;
@@ -367,23 +364,26 @@ defineFeature(feature, (test) => {
       expect(listPage.exists()).toBe(true);
     });
 
-    when('User presses on a Pokemon item', async () => {
-      PokemonsListReactWrapper.update();
+    when(
+      'User presses on a Pokemon item with the name "pokemon-5"',
+      async () => {
+        PokemonsListReactWrapper.update();
 
-      const pokemonItem = PokemonsListReactWrapper.findWhere(
-        (node) => node.prop('testID') === 'pokemon-card_0001-10',
-      ).first();
+        const pokemonItem = PokemonsListReactWrapper.findWhere(
+          (node) => node.prop('testID') === 'pokemon-card_5',
+        ).first();
 
-      const onPress = pokemonItem.prop('onPress');
-      onPress();
+        const onPress = pokemonItem.prop('onPress');
+        onPress();
 
-      PokemonsListReactWrapper.update();
-    });
+        PokemonsListReactWrapper.update();
+      },
+    );
 
     then('User should navigate to the Pokemon details page', () => {
       expect(props.navigation.push).toHaveBeenCalledWith('Details', {
         pokemon: expect.objectContaining({
-          name: 'bulbasaur',
+          name: 'pokemon-5',
         }),
       });
     });
@@ -401,8 +401,10 @@ defineFeature(feature, (test) => {
       getPokemonsListService.mockResolvedValue(
         mockPokemonResponse(mockPokemonList(20), 20),
       );
+
+      // Simulate failure for Pokemon with ID 10
       getPokemonDetailsService.mockImplementation((url) =>
-        mockPokemonListUnique(url, true),
+        mockPokemonListUnique(url, url.includes('/10/')),
       );
 
       PokemonsListReactWrapper = mount(<PokemonsListView {...props} />);
@@ -420,7 +422,7 @@ defineFeature(feature, (test) => {
     let pokemonList: ReactWrapper;
     let pokemonItems: ReactWrapper;
 
-    then('User should see 19 pokemons loaded', () => {
+    then('User should see 19 pokemons loaded successfully', () => {
       pokemonList = PokemonsListReactWrapper.findWhere(
         (node) => node.is(FlatList) && node.prop('testID') === 'pokemon-list',
       );

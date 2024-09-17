@@ -41,10 +41,7 @@ export const mockPokemonListUnique = (
   const id = match ? match[1] : '1'; // Default to '1'
 
   if (withError) {
-    // Simulate a failure for a specific ID, e.g., ID '10'
-    if (id === '10') {
-      return Promise.reject(new Error('Failed to fetch data'));
-    }
+    return Promise.reject(new Error('Failed to fetch data'));
   }
 
   return Promise.resolve<PokemonData>({

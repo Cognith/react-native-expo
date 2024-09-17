@@ -39,13 +39,13 @@ Feature: Pokemon List
     Given User is on the Pokemon List Page
     When User loaded the initial state of Pokemon List page
     Then User should see the list page
-    When User presses on a Pokemon item
+    When User presses on a Pokemon item with the name "pokemon-5"
     Then User should navigate to the Pokemon details page
 
   Scenario: Pokemon List Page successfully loaded data but with one error
     Given User is on the Pokemon List Page
     When the pokemons are loaded except one
-    Then User should see 19 pokemons loaded
+    Then User should see 19 pokemons loaded successfully
 
   Scenario: Render Pokemon List Page with no more pages to load
     Given User has scrolled through all available pokemon and no more pages are available
