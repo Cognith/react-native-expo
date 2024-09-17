@@ -30,9 +30,16 @@ export const mockPokemonList = Array.from({ length: 20 }, (_, index) => ({
   url: `https://pokeapi.co/api/v2/pokemon/${index + 1}/`,
 }));
 
-export const mockPokemonListUnique = (url: string): Promise<PokemonData> => {
+export const mockPokemonListUnique = (url: string, withError = false): Promise<PokemonData> => {
   const match = url.match(/\/(\d+)\//); // Extract ID from the URL
   const id = match ? match[1] : '1'; // Default to '1'
+
+  if (withError) {
+    // Simulate a failure for a specific ID, e.g., ID '10'
+    if (id === '10') {
+      return Promise.reject(new Error('Failed to fetch data'));
+    }
+  }
 
   return Promise.resolve<PokemonData>({
     id: parseInt(id, 10).toString(),

@@ -386,4 +386,52 @@ defineFeature(feature, (test) => {
       });
     });
   });
+
+  /**
+   * Test when Pokemon List Page successfully loaded the data but with one error
+   */
+  test('Pokemon List Page successfully loaded data but with one error', async ({
+    given,
+    when,
+    then,
+  }) => {
+    given('User is on the Pokemon List Page', async () => {
+      getPokemonsListService.mockResolvedValue(
+        mockPokemonResponse(mockPokemonList),
+      );
+      getPokemonDetailsService.mockImplementation((url) =>
+        mockPokemonListUnique(url, true),
+      );
+
+      PokemonsListReactWrapper = mount(<PokemonsListView {...props} />);
+
+      // Bypass the loading state
+      await act(async () => {
+        PokemonsListReactWrapper.update();
+      });
+    });
+
+    when('the pokemons are loaded except one', async () => {
+      PokemonsListReactWrapper.update();
+    });
+
+    let pokemonList: ReactWrapper;
+    let pokemonItems: ReactWrapper;
+
+    then('User should see 19 pokemons loaded', () => {
+      pokemonList = PokemonsListReactWrapper.findWhere(
+        (node) => node.is(FlatList) && node.prop('testID') === 'pokemon-list',
+      );
+      expect(pokemonList.exists()).toBe(true);
+
+      pokemonItems = pokemonList
+        .find(PokemonCard)
+        .findWhere(
+          (node) =>
+            node.is(Pressable) && node.prop('testID').includes('pokemon-card'),
+        );
+      expect(pokemonItems.exists()).toBe(true);
+      expect(pokemonItems.length).toEqual(19);
+    });
+  });
 });
