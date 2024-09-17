@@ -108,49 +108,49 @@ defineFeature(feature, (test) => {
     });
   });
 
-  test("User fetch error to Pokemon Home Page", async ({
+  test("User fetch error to Pokemon Detail Page", async ({
     given,
     when,
     then,
   }) => {
-    let PokemonHomeWrapper: ShallowWrapper;
+    let DetailPageWrapper: ShallowWrapper;
     let instance: DetailPage;
 
-    given("User on the Pokemon Home page", () => {
+    given("User on the Pokemon Detail page", () => {
       global.fetch = jest.fn(() =>
         Promise.reject(new Error("Fetch error"))
       ) as jest.Mock;
 
-      PokemonHomeWrapper = shallow(<DetailPage {...props} />);
+      DetailPageWrapper = shallow(<DetailPage {...props} />);
     });
 
-    when("User fully loaded Pokemon home page", () => {
-      instance = PokemonHomeWrapper.instance() as DetailPage;
+    when("User fully loaded Pokemon Detail page", () => {
+      instance = DetailPageWrapper.instance() as DetailPage;
     });
 
-    then("User fetch error to Pokemon Home Page", () => {
-      // expect(instance.state.error).toEqual(true);
+    then("User fetch error to Pokemon Detail Page", () => {
+      expect(consoleLogMock).toHaveBeenCalled();
     });
   });
 
   test("fetch Pokemon when query is set", ({ given, when, then }) => {
-    let PokemonHomeWrapper: ShallowWrapper;
+    let DetailPageWrapper: ShallowWrapper;
     let instance: DetailPage;
 
     given("User on the Pokemon Detail page", () => {
-      PokemonHomeWrapper = shallow(<DetailPage {...props} />);
-      instance = PokemonHomeWrapper.instance() as DetailPage;
+      DetailPageWrapper = shallow(<DetailPage {...props} />);
+      instance = DetailPageWrapper.instance() as DetailPage;
 
       // Mock the function that should be triggered
       instance.fetchPokemon = fetchPokemonMock;
 
       // Ensure the state is initialized
-      PokemonHomeWrapper.setState({ query: "", debouncedQuery: "" });
+      DetailPageWrapper.setState({ query: "", debouncedQuery: "" });
     });
 
     when("Query is set", () => {
       // Update the state to have a non-empty query
-      PokemonHomeWrapper.setState({
+      DetailPageWrapper.setState({
         query: "pikachu",
         debouncedQuery: "pikachu",
       });
@@ -174,23 +174,23 @@ defineFeature(feature, (test) => {
   });
 
   test("fetch Pokemon when query is not set", ({ given, when, then }) => {
-    let PokemonHomeWrapper: ShallowWrapper;
+    let DetailPageWrapper: ShallowWrapper;
     let instance: DetailPage;
 
     given("User on the Pokemon Detail page", () => {
-      PokemonHomeWrapper = shallow(<DetailPage {...props} />);
-      instance = PokemonHomeWrapper.instance() as DetailPage;
+      DetailPageWrapper = shallow(<DetailPage {...props} />);
+      instance = DetailPageWrapper.instance() as DetailPage;
 
       // Mock the function that should be triggered
       instance.fetchPokemonFromParams = fetchPokemonFromParamsMock;
 
       // Ensure the state is initialized
-      PokemonHomeWrapper.setState({ query: "", debouncedQuery: "" });
+      DetailPageWrapper.setState({ query: "", debouncedQuery: "" });
     });
 
     when("Query is not set", () => {
       // Update the state to have a non-empty query
-      PokemonHomeWrapper.setState({ debouncedQuery: "haha" });
+      DetailPageWrapper.setState({ debouncedQuery: "haha" });
 
       // Simulate component update
       instance.componentDidUpdate(

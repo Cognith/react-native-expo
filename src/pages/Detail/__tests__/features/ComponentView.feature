@@ -16,10 +16,10 @@ Feature: Pokemon Detail
         When onChangeText is triggered
         Then clearTimeout should be called
 
-    Scenario: User fetch error to Pokemon Home Page
-        Given User on the Pokemon Home page
-        When User fully loaded Pokemon home page
-        Then User fetch error to Pokemon Home Page
+    Scenario: User fetch error to Pokemon Detail Page
+        Given User on the Pokemon Detail page
+        When User fully loaded Pokemon Detail page
+        Then User fetch error to Pokemon Detail Page
 
     Scenario: fetch Pokemon when query is set
         Given User on the Pokemon Detail page
