@@ -23,7 +23,7 @@ Feature: Pokemon List
     Then User should see a loading indicator at the end of the list
     When more pokemons have successfully loaded
     Then User should see more Pokemons loaded
-    When there are no more pokemons after scroll
+    When there are no more pokemons to load after scrolling again
     Then User should not see a loading indicator at the end of the list
 
   Scenario: Searching for Pokemons in Pokemon List Page
@@ -46,3 +46,8 @@ Feature: Pokemon List
     Given User is on the Pokemon List Page
     When the pokemons are loaded except one
     Then User should see 19 pokemons loaded
+
+  Scenario: Render Pokemon List Page with no more pages to load
+    Given User has scrolled through all available Pokémon and no more pages are available
+    When User attempts to load more Pokémon
+    Then No additional Pokémon should be fetched and loading should not continue

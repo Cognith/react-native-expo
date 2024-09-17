@@ -1,12 +1,14 @@
 import { PokemonDataLinkModel, PokemonsResponseModel } from "../../services/models";
 import { PokemonData } from "../../types";
 
-export const mockPokemonResponse = (results: PokemonDataLinkModel[]): PokemonsResponseModel => ({
-  count: 20,
-  results: results,
-  next: 'https://pokeapi.co/api/v2/pokemon?limit=20&offset=0',
-  previous: null,
-});
+export const mockPokemonResponse = (results: PokemonDataLinkModel[],
+  count: number,
+  hasNext = true): PokemonsResponseModel => ({
+    count: count,
+    results: results,
+    next: hasNext ? 'https://pokeapi.co/api/v2/pokemon?limit=20&offset=0' : null,
+    previous: null,
+  });
 
 export const mockPokemonData: PokemonData = {
   id: '0001',
@@ -25,7 +27,7 @@ export const mockPokemonData: PokemonData = {
   types: ['grass', 'poison'],
 };
 
-export const mockPokemonList = Array.from({ length: 20 }, (_, index) => ({
+export const mockPokemonList = (length: number) => Array.from({ length: length }, (_, index) => ({
   name: `pokemon-${index + 1}`,
   url: `https://pokeapi.co/api/v2/pokemon/${index + 1}/`,
 }));

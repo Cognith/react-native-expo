@@ -12,6 +12,7 @@ import {
 import { FlatList, Pressable, TextInput } from 'react-native';
 import { mockPokemonResponse } from '../../../../__mocks__/data/mockData';
 import { PokemonCard, PText } from '../../../../components';
+import { PokemonsListState } from '../../PokemonsListController';
 
 const props = {
   navigation: {
@@ -34,9 +35,9 @@ defineFeature(feature, (test) => {
     'getPokemonDetails',
   );
 
-  let PokemonsListShallowWrapper: ShallowWrapper;
   let PokemonsListReactWrapper: ReactWrapper;
   let instance: PokemonsListView;
+  let state: PokemonsListState;
 
   beforeEach(() => {
     jest.resetModules();
@@ -58,7 +59,7 @@ defineFeature(feature, (test) => {
   }) => {
     given('User is on the Pokemon List page', async () => {
       getPokemonsListService.mockResolvedValue(
-        mockPokemonResponse(mockPokemonList),
+        mockPokemonResponse(mockPokemonList(20), 20),
       );
       getPokemonDetailsService.mockImplementation(mockPokemonListUnique);
 
@@ -150,7 +151,7 @@ defineFeature(feature, (test) => {
   }) => {
     given('User is on the Pokemon List Page', async () => {
       getPokemonsListService.mockResolvedValue(
-        mockPokemonResponse(mockPokemonList),
+        mockPokemonResponse(mockPokemonList(20), 20),
       );
       getPokemonDetailsService.mockImplementation(mockPokemonListUnique);
 
@@ -203,28 +204,25 @@ defineFeature(feature, (test) => {
     });
 
     then('User should see more Pokemons loaded', () => {
-      const pokemonItem = PokemonsListReactWrapper.findWhere(
+      pokemonItems = PokemonsListReactWrapper.findWhere(
         (node) =>
           node.prop('testID') && node.prop('testID').includes('pokemon-card'),
       );
-      expect(pokemonItem.length).toBeGreaterThan(20);
+      expect(pokemonItems.length).toBeGreaterThan(20);
+      expect(pokemonItems.length).toEqual(40);
     });
 
-    when('there are no more pokemons after scroll', async () => {
-      getPokemonsListService.mockResolvedValueOnce({
-        count: 20,
-        results: mockPokemonList,
-        next: null, // No more data to load
-        previous: 'https://pokeapi.co/api/v2/pokemon?offset=20&limit=20',
-      });
+    when(
+      'there are no more pokemons to load after scrolling again',
+      async () => {
+        const onEndReached = pokemonList.prop('onEndReached') as () => void;
+        onEndReached();
 
-      const onEndReached = pokemonList.prop('onEndReached') as () => void;
-      onEndReached();
-
-      await act(async () => {
-        PokemonsListReactWrapper.update();
-      });
-    });
+        await act(async () => {
+          PokemonsListReactWrapper.update();
+        });
+      },
+    );
 
     then(
       'User should not see a loading indicator at the end of the list',
@@ -235,6 +233,7 @@ defineFeature(feature, (test) => {
           '[testID="load-more-indicator"]',
         );
         expect(footerLoader.exists()).toBe(false);
+        expect(pokemonItems.length).toEqual(40);
       },
     );
   });
@@ -249,7 +248,7 @@ defineFeature(feature, (test) => {
   }) => {
     given('User is on the Pokemon List Page', async () => {
       getPokemonsListService.mockResolvedValue(
-        mockPokemonResponse(mockPokemonList),
+        mockPokemonResponse(mockPokemonList(20), 20),
       );
       getPokemonDetailsService.mockImplementation(mockPokemonListUnique);
 
@@ -348,7 +347,7 @@ defineFeature(feature, (test) => {
     given('User is on the Pokemon List Page', async () => {
       getPokemonsListService.mockResolvedValue({
         count: 20,
-        results: mockPokemonList,
+        results: mockPokemonList(20),
         next: 'https://pokeapi.co/api/v2/pokemon?limit=20&offset=0',
         previous: null,
       });
@@ -400,7 +399,7 @@ defineFeature(feature, (test) => {
   }) => {
     given('User is on the Pokemon List Page', async () => {
       getPokemonsListService.mockResolvedValue(
-        mockPokemonResponse(mockPokemonList),
+        mockPokemonResponse(mockPokemonList(20), 20),
       );
       getPokemonDetailsService.mockImplementation((url) =>
         mockPokemonListUnique(url, true),
@@ -436,5 +435,47 @@ defineFeature(feature, (test) => {
       expect(pokemonItems.exists()).toBe(true);
       expect(pokemonItems.length).toEqual(19);
     });
+  });
+
+  /**
+   *
+   */
+  test('Render Pokemon List Page with no more pages to load', ({
+    given,
+    when,
+    then,
+  }) => {
+    given(
+      'User has scrolled through all available Pokémon and no more pages are available',
+      async () => {
+        getPokemonsListService.mockResolvedValue(
+          mockPokemonResponse(mockPokemonList(40), 40, true),
+        );
+        getPokemonDetailsService.mockImplementation(mockPokemonListUnique);
+
+        PokemonsListReactWrapper = mount(<PokemonsListView {...props} />);
+        instance = PokemonsListReactWrapper.instance() as PokemonsListView;
+
+        PokemonsListReactWrapper.setState({ offset: 20 });
+      },
+    );
+
+    when('User attempts to load more Pokémon', async () => {
+      await act(async () => {
+        instance.fetchPokemons();
+      });
+
+      PokemonsListReactWrapper.update();
+    });
+
+    then(
+      'No additional Pokémon should be fetched and loading should not continue',
+      () => {
+        state = PokemonsListReactWrapper.state() as PokemonsListState;
+
+        expect(state.pokemons.length).toBe(40);
+        expect(state.isLoading).toBe(false);
+      },
+    );
   });
 });
