@@ -68,7 +68,7 @@ export default class PokemonsListView extends PokemonsListController {
                 onEndReached={this.fetchMorePokemon}
                 onEndReachedThreshold={0.5}
                 ListFooterComponent={() =>
-                  this.state.isLoading ? (
+                  this.state.isLoading && this.state.next !== null ? (
                     <PText
                       testID="load-more-indicator"
                       style={styles.loadMore}

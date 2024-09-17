@@ -22,6 +22,8 @@ Feature: Pokemon List
     Then User should see a loading indicator at the end of the list
     When more pokemons have successfully loaded
     Then User should see more Pokemons loaded
+    When there are no more pokemons after scroll
+    Then User should not see a loading indicator at the end of the list
 
   Scenario: Searching for Pokemons in Pokemon List Page
     Given User is on the Pokemon List Page

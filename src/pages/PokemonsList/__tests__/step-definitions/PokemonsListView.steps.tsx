@@ -206,6 +206,34 @@ defineFeature(feature, (test) => {
       );
       expect(pokemonItem.length).toBeGreaterThan(20);
     });
+
+    when('there are no more pokemons after scroll', async () => {
+      getPokemonsListService.mockResolvedValueOnce({
+        count: 20,
+        results: mockPokemonList,
+        next: null, // No more data to load
+        previous: 'https://pokeapi.co/api/v2/pokemon?offset=20&limit=20',
+      });
+
+      const onEndReached = pokemonList.prop('onEndReached') as () => void;
+      onEndReached();
+
+      await act(async () => {
+        PokemonsListReactWrapper.update();
+      });
+    });
+
+    then(
+      'User should not see a loading indicator at the end of the list',
+      () => {
+        PokemonsListReactWrapper.update();
+
+        const footerLoader = PokemonsListReactWrapper.find(
+          '[testID="load-more-indicator"]',
+        );
+        expect(footerLoader.exists()).toBe(false);
+      },
+    );
   });
 
   /**
