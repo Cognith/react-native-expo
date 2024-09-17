@@ -17,5 +17,4 @@ export class PokeApiPokemonMapper implements PokemonDataMapper {
       types: data.types.map(type => type.type.name),
     };
   }
-
 }

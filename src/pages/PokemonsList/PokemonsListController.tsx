@@ -59,7 +59,7 @@ export default class PokemonsListController extends Component<
       const pokemonsList = await PokemonService.getPokemonsList(limit, offset);
 
       // Fetch details for each Pokemon
-      const pokemonsListWithDetails = await Promise.all(
+      const pokemonsListWithDetails = await Promise.allSettled(
         pokemonsList.results.map(async (pokemon) => {
           try {
             return PokemonService.getPokemonDetails(pokemon.url);
@@ -70,9 +70,12 @@ export default class PokemonsListController extends Component<
       );
 
       // Filter out failed data. Get the successfully fetched data only.
-      const successfulPokemonData = pokemonsListWithDetails.filter(
-        (pokemon): pokemon is PokemonData => pokemon !== null,
-      );
+      const successfulPokemonData = pokemonsListWithDetails
+        .filter(
+          (result): result is PromiseFulfilledResult<PokemonData> =>
+            result.status === 'fulfilled' && result.value !== null,
+        )
+        .map((result) => result.value);
 
       this.setState((prevState) => ({
         pokemons: [...prevState.pokemons, ...successfulPokemonData],
