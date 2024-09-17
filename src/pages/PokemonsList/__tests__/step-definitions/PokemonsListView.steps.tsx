@@ -46,15 +46,7 @@ defineFeature(feature, (test) => {
 
   beforeEach(() => {
     jest.resetModules();
-    // jest.clearAllMocks();
     jest.useFakeTimers();
-
-    // Mock debounce to directly call the debounced function
-    /* jest
-      .spyOn(debounceUtils, 'debounce')
-      .mockImplementation((func: Function) => {
-        return (...args: any[]) => func(...args); // Call the debounced function immediately without delay
-      }); */
   });
 
   afterEach(() => {
@@ -264,17 +256,11 @@ defineFeature(feature, (test) => {
     let searchKeyword = 'mon-5';
 
     when("User type part of a Pokemon's name in the search input", async () => {
-      PokemonsListReactWrapper.update();
-
       const searchBar = PokemonsListReactWrapper.findWhere(
         (node) => node.is(TextInput) && node.prop('testID') === 'search-bar',
       );
 
       searchBar.props().onChangeText(searchKeyword);
-
-      await act(async () => {
-        PokemonsListReactWrapper.update();
-      });
 
       await act(async () => {
         // Fast-forward debounce timer
@@ -292,6 +278,33 @@ defineFeature(feature, (test) => {
       foundPokemons.every((node) => {
         expect(node.text().toLowerCase()).toContain(searchKeyword);
       });
+    });
+
+    when(
+      'User search for unavailable Pokemon in the search input',
+      async () => {
+        const searchBar = PokemonsListReactWrapper.findWhere(
+          (node) => node.is(TextInput) && node.prop('testID') === 'search-bar',
+        );
+
+        searchBar.props().onChangeText('xxxxx');
+
+        await act(async () => {
+          // Fast-forward debounce timer
+          jest.advanceTimersByTime(500);
+          PokemonsListReactWrapper.update();
+        });
+      },
+    );
+
+    then('User should see "No Pokemon is found" message', async () => {
+      PokemonsListReactWrapper.update();
+
+      const emptyMessage = PokemonsListReactWrapper.find(
+        '[testID="empty-view"]',
+      );
+      expect(emptyMessage.exists()).toBe(true);
+      expect(emptyMessage.text()).toBe('No Pokemon is found');
     });
   });
 

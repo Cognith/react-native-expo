@@ -29,6 +29,8 @@ Feature: Pokemon List
     Then User should see 20 pokemons loaded initially
     When User type part of a Pokemon's name in the search input
     Then User should see a list of Pokemons found by the name
+    When User search for unavailable Pokemon in the search input
+    Then User should see "No Pokemon is found" message
 
   Scenario: Navigate to a Pokemon's Details page from the Pokemon List Page
     Given User is on the Pokemon List Page
