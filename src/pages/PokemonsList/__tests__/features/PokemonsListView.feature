@@ -25,8 +25,8 @@ Feature: Pokemon List
 
   Scenario: Searching for Pokemons in Pokemon List Page
     Given User is on the Pokemon List Page
-    When User loaded the initial state of Pokemon List page
-    Then User should see the list page
+    When the first list of pokemons are loaded
+    Then User should see 20 pokemons loaded initially
     When User type part of a Pokemon's name in the search input
     Then User should see a list of Pokemons found by the name
 

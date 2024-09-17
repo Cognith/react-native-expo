@@ -12,6 +12,11 @@ import {
 import { FlatList, Pressable, TextInput } from 'react-native';
 import { mockPokemonResponse } from '../../../../__mocks__/data/mockData';
 import { PokemonCard, PText } from '../../../../components';
+import PokemonsListController, {
+  PokemonsListState,
+} from '../../PokemonsListController';
+import * as debounceUtils from '../../../../utils/debounce';
+import { debounce } from '../../../../utils/debounce';
 
 const props = {
   navigation: {
@@ -41,7 +46,20 @@ defineFeature(feature, (test) => {
 
   beforeEach(() => {
     jest.resetModules();
+    // jest.clearAllMocks();
+    jest.useFakeTimers();
+
+    // Mock debounce to directly call the debounced function
+    /* jest
+      .spyOn(debounceUtils, 'debounce')
+      .mockImplementation((func: Function) => {
+        return (...args: any[]) => func(...args); // Call the debounced function immediately without delay
+      }); */
+  });
+
+  afterEach(() => {
     jest.clearAllMocks();
+    jest.clearAllTimers();
   });
 
   /**
@@ -143,8 +161,7 @@ defineFeature(feature, (test) => {
 
       PokemonsListReactWrapper = mount(<PokemonsListView {...props} />);
 
-      // Ensure to bypass the initial loading state because it is already
-      // checked in another scenario.
+      // Bypass the loading state
       await act(async () => {
         PokemonsListReactWrapper.update();
       });
@@ -208,50 +225,72 @@ defineFeature(feature, (test) => {
     then,
   }) => {
     given('User is on the Pokemon List Page', async () => {
-      getPokemonsListService.mockResolvedValue({
-        count: 20,
-        results: mockPokemonList,
-        next: 'https://pokeapi.co/api/v2/pokemon?limit=20&offset=0',
-        previous: null,
-      });
-      getPokemonDetailsService.mockResolvedValue(mockPokemonData);
+      getPokemonsListService.mockResolvedValue(
+        mockPokemonResponse(mockPokemonList),
+      );
+      getPokemonDetailsService.mockImplementation(mockPokemonListUnique);
 
       PokemonsListReactWrapper = mount(<PokemonsListView {...props} />);
-      instance = PokemonsListReactWrapper.instance() as PokemonsListView;
+
+      // Bypass the loading state
+      await act(async () => {
+        PokemonsListReactWrapper.update();
+      });
     });
 
-    when('User loaded the initial state of Pokemon List page', async () => {
-      await instance.componentDidMount();
+    when('the first list of pokemons are loaded', async () => {
       PokemonsListReactWrapper.update();
     });
 
-    then('User should see the list page', () => {
-      const listPage = PokemonsListReactWrapper.find('[testID="list-page"]');
-      expect(listPage.exists()).toBe(true);
+    let pokemonList: ReactWrapper;
+    let pokemonItems: ReactWrapper;
+
+    then('User should see 20 pokemons loaded initially', () => {
+      pokemonList = PokemonsListReactWrapper.findWhere(
+        (node) => node.is(FlatList) && node.prop('testID') === 'pokemon-list',
+      );
+      expect(pokemonList.exists()).toBe(true);
+
+      pokemonItems = pokemonList
+        .find(PokemonCard)
+        .findWhere(
+          (node) =>
+            node.is(Pressable) && node.prop('testID').includes('pokemon-card'),
+        );
+      expect(pokemonItems.exists()).toBe(true);
+      expect(pokemonItems.length).toEqual(20);
     });
+
+    let searchKeyword = 'mon-5';
 
     when("User type part of a Pokemon's name in the search input", async () => {
       PokemonsListReactWrapper.update();
 
       const searchBar = PokemonsListReactWrapper.findWhere(
-        (node) =>
-          node.type() === TextInput && node.prop('testID') === 'search-bar',
+        (node) => node.is(TextInput) && node.prop('testID') === 'search-bar',
       );
-      searchBar.simulate('change', { target: { value: 'bulb' } });
 
-      PokemonsListReactWrapper.update();
+      searchBar.props().onChangeText(searchKeyword);
+
+      await act(async () => {
+        PokemonsListReactWrapper.update();
+      });
+
+      await act(async () => {
+        // Fast-forward debounce timer
+        jest.advanceTimersByTime(500);
+        PokemonsListReactWrapper.update();
+      });
     });
 
     then('User should see a list of Pokemons found by the name', () => {
-      const foundPokemon = PokemonsListReactWrapper.findWhere(
-        (node) =>
-          node.prop('testID') === 'pokemon-name' &&
-          node.text().includes('bulb'),
+      const foundPokemons = PokemonsListReactWrapper.findWhere(
+        (node) => node.is(PText) && node.prop('testID') === 'pokemon-name',
       );
 
-      // Check if all found Pokemon names include 'bulb'
-      foundPokemon.forEach((node) => {
-        expect(node.text().toLowerCase()).toContain('bulb');
+      // Check if all found Pokemon names include the searched keyword
+      foundPokemons.every((node) => {
+        expect(node.text().toLowerCase()).toContain(searchKeyword);
       });
     });
   });

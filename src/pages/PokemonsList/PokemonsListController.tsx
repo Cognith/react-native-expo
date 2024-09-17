@@ -35,12 +35,12 @@ export default class PokemonsListController extends Component<
       search: '',
       debouncedSearch: '',
     };
-
-    this.debounceSearch = debounce(this.handleDebouncedSearch, 300);
   }
 
   // Debounced search handler
-  debounceSearch: (text: string) => void;
+  debounceSearch = debounce((text: string) => {
+    this.setState({ debouncedSearch: text });
+  }, 500);
 
   componentDidMount = async () => {
     this.fetchPokemons();
@@ -69,13 +69,13 @@ export default class PokemonsListController extends Component<
         }),
       );
 
-      // Filter out failed data.
-      const filteredPokemons = pokemonsListWithDetails.filter(
+      // Filter out failed data. Get the successfully fetched data only.
+      const successfulPokemonData = pokemonsListWithDetails.filter(
         (pokemon): pokemon is PokemonData => pokemon !== null,
       );
 
       this.setState((prevState) => ({
-        pokemons: [...prevState.pokemons, ...filteredPokemons],
+        pokemons: [...prevState.pokemons, ...successfulPokemonData],
         offset: prevState.offset + limit,
         next: pokemonsList.next,
         isLoading: false,
@@ -94,11 +94,6 @@ export default class PokemonsListController extends Component<
     }
   };
 
-  // Triggered by debounced function
-  handleDebouncedSearch = (text: string) => {
-    this.setState({ debouncedSearch: text });
-  };
-
   handleSearch = (text: string) => {
     this.setState({ search: text });
     this.debounceSearch(text); // Call the debounced search function
@@ -106,6 +101,8 @@ export default class PokemonsListController extends Component<
 
   filteredPokemonList = () => {
     const { debouncedSearch, pokemons } = this.state;
+
+    if (debouncedSearch === '') return pokemons;
 
     return pokemons.filter(
       (pokemon) =>
