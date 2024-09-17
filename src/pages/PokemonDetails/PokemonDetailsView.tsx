@@ -22,6 +22,7 @@ export default class PokemonDetailsView extends PokemonDetailsController {
         >
           <View style={styles.header}>
             <TouchableOpacity
+              testID="back"
               onPress={() => this.props.navigation.pop()}
               activeOpacity={0.7}
             >

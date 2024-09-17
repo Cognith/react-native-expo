@@ -1,4 +1,4 @@
-import { mount, ReactWrapper, shallow, ShallowWrapper } from 'enzyme';
+import { mount, ReactWrapper, ShallowWrapper } from 'enzyme';
 import { defineFeature, loadFeature } from 'jest-cucumber';
 import { act } from 'react-dom/test-utils';
 import PokemonsListView from '../../PokemonsListView';
@@ -12,17 +12,11 @@ import {
 import { FlatList, Pressable, TextInput } from 'react-native';
 import { mockPokemonResponse } from '../../../../__mocks__/data/mockData';
 import { PokemonCard, PText } from '../../../../components';
-import PokemonsListController, {
-  PokemonsListState,
-} from '../../PokemonsListController';
-import * as debounceUtils from '../../../../utils/debounce';
-import { debounce } from '../../../../utils/debounce';
 
 const props = {
   navigation: {
     navigate: jest.fn(),
     push: jest.fn(),
-    pop: jest.fn(),
   } as any,
   route: {
     params: {},
