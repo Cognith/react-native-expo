@@ -1,22 +1,23 @@
 import { PokemonDataLinkModel, PokemonsResponseModel } from "../../services/models";
 import { PokemonData } from "../../types";
 
-export const mockPokemonResponse = (results: PokemonDataLinkModel[],
+export const mockPokemonResponse = (
+  results: PokemonDataLinkModel[],
   count: number,
-  hasNext = true): PokemonsResponseModel => ({
-    count: count,
-    results: results,
-    next: hasNext ? 'https://pokeapi.co/api/v2/pokemon?limit=20&offset=0' : null,
-    previous: null,
-  });
+  hasNext = true
+): PokemonsResponseModel => ({
+  count: count,
+  results: results,
+  next: hasNext ? 'https://pokeapi.co/api/v2/pokemon?limit=20&offset=0' : null,
+  previous: null,
+});
 
 export const mockPokemonData: PokemonData = {
   id: '0001',
   name: 'bulbasaur',
   height: 7,
   weight: 69,
-  image:
-    'https://',
+  image: 'https://',
   stats: [
     {
       key: 'hp',
@@ -32,7 +33,10 @@ export const mockPokemonList = (length: number) => Array.from({ length: length }
   url: `https://pokeapi.co/api/v2/pokemon/${index + 1}/`,
 }));
 
-export const mockPokemonListUnique = (url: string, withError = false): Promise<PokemonData> => {
+export const mockPokemonListUnique = (
+  url: string,
+  withError = false,
+): Promise<PokemonData> => {
   const match = url.match(/\/(\d+)\//); // Extract ID from the URL
   const id = match ? match[1] : '1'; // Default to '1'
 

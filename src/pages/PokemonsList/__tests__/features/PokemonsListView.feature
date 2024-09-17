@@ -48,6 +48,6 @@ Feature: Pokemon List
     Then User should see 19 pokemons loaded
 
   Scenario: Render Pokemon List Page with no more pages to load
-    Given User has scrolled through all available Pokémon and no more pages are available
-    When User attempts to load more Pokémon
-    Then No additional Pokémon should be fetched and loading should not continue
+    Given User has scrolled through all available pokemon and no more pages are available
+    When User attempts to load more pokemon
+    Then No additional pokemon should be fetched and loading should not continue

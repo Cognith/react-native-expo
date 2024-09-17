@@ -446,10 +446,10 @@ defineFeature(feature, (test) => {
     then,
   }) => {
     given(
-      'User has scrolled through all available Pokémon and no more pages are available',
+      'User has scrolled through all available pokemon and no more pages are available',
       async () => {
         getPokemonsListService.mockResolvedValue(
-          mockPokemonResponse(mockPokemonList(40), 40, true),
+          mockPokemonResponse(mockPokemonList(40), 40, false),
         );
         getPokemonDetailsService.mockImplementation(mockPokemonListUnique);
 
@@ -460,7 +460,7 @@ defineFeature(feature, (test) => {
       },
     );
 
-    when('User attempts to load more Pokémon', async () => {
+    when('User attempts to load more pokemon', async () => {
       await act(async () => {
         instance.fetchPokemons();
       });
@@ -469,7 +469,7 @@ defineFeature(feature, (test) => {
     });
 
     then(
-      'No additional Pokémon should be fetched and loading should not continue',
+      'No additional pokemon should be fetched and loading should not continue',
       () => {
         state = PokemonsListReactWrapper.state() as PokemonsListState;
 
