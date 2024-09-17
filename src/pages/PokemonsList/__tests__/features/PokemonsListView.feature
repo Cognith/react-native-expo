@@ -13,6 +13,7 @@ Feature: Pokemon List
     Given User is on the Pokemon List Page
     When there is an error loading the Pokemon List Page
     Then User should see a message with "Error:"
+    Then User should see a message with "Unknown error" if it is an unknown error
 
   Scenario: Scrolling down to load more Pokemons in Pokemon List Page
     Given User is on the Pokemon List Page

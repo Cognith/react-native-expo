@@ -124,17 +124,26 @@ defineFeature(feature, (test) => {
       PokemonsListReactWrapper = mount(<PokemonsListView {...props} />);
     });
 
+    let errorMessage: ReactWrapper;
+
     when('there is an error loading the Pokemon List Page', async () => {
       PokemonsListReactWrapper.update();
     });
 
     then('User should see a message with "Error:"', () => {
-      const errorMessage = PokemonsListReactWrapper.findWhere(
+      errorMessage = PokemonsListReactWrapper.findWhere(
         (node) => node.is(PText) && node.prop('testID') === 'error-message',
       );
       expect(errorMessage.exists()).toBe(true);
       expect(errorMessage.text()).toContain('Error:');
     });
+
+    then(
+      'User should see a message with "Unknown error" if it is an unknown error',
+      () => {
+        expect(errorMessage.text()).toContain('Unknown error');
+      },
+    );
   });
 
   /**
