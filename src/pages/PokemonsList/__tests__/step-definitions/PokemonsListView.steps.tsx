@@ -338,7 +338,9 @@ defineFeature(feature, (test) => {
     });
   });
 
-  // Test navigating to a Pokemon's Details Page from Pokemon List Page
+  /**
+   * Test navigating to a Pokemon's Details Page from Pokemon List Page
+   */
   test("Navigate to a Pokemon's Details page from the Pokemon List Page", async ({
     given,
     when,
@@ -440,7 +442,7 @@ defineFeature(feature, (test) => {
   });
 
   /**
-   *
+   * Unit test Pokemon List Page when there is no more pages to load
    */
   test('Render Pokemon List Page with no more pages to load', ({
     given,

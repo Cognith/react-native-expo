@@ -62,7 +62,7 @@ export default class PokemonsListController extends Component<
       const pokemonsListWithDetails = await Promise.allSettled(
         pokemonsList.results.map(async (pokemon) => {
           try {
-            return PokemonService.getPokemonDetails(pokemon.url);
+            return await PokemonService.getPokemonDetails(pokemon.url);
           } catch (error) {
             return null;
           }
