@@ -9,11 +9,17 @@ Feature: Pokemon List
     Then User should see 20 pokemons loaded initially
     Then User should see a Pokemon named "pokemon-1"
 
-  Scenario: Pokemon List Page loaded with error
+  Scenario: Pokemon List Page loaded with known error
     Given User is on the Pokemon List Page
     When there is an error loading the Pokemon List Page
     Then User should see a message with "Error:"
-    Then User should see a message with "Unknown error" if it is an unknown error
+    Then User should see "Some known error" message for a known error
+
+  Scenario: Pokemon List Page loaded with unknown error
+    Given User is on the Pokemon List Page
+    When there is an unknown error loading the Pokemon List Page
+    Then User should see a message with "Error:"
+    Then User should see "Unknown error" message for an unknown error
 
   Scenario: Scrolling down to load more Pokemons in Pokemon List Page
     Given User is on the Pokemon List Page

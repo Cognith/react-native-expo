@@ -111,11 +111,11 @@ defineFeature(feature, (test) => {
   });
 
   /**
-   * Test when Pokemon List Page fails to load the data
+   * Test when Pokemon List Page fails to load the data with error
    */
-  test('Pokemon List Page loaded with error', ({ given, when, then }) => {
+  test('Pokemon List Page loaded with known error', ({ given, when, then }) => {
     given('User is on the Pokemon List Page', async () => {
-      getPokemonsListService.mockRejectedValue(mockError);
+      getPokemonsListService.mockRejectedValue(new Error('Some known error'));
       PokemonsListReactWrapper = mount(<PokemonsListView {...props} />);
     });
 
@@ -133,12 +133,44 @@ defineFeature(feature, (test) => {
       expect(errorMessage.text()).toContain('Error:');
     });
 
-    then(
-      'User should see a message with "Unknown error" if it is an unknown error',
-      () => {
-        expect(errorMessage.text()).toContain('Unknown error');
+    then('User should see "Some known error" message for a known error', () => {
+      expect(errorMessage.text()).toContain('Some known error');
+    });
+  });
+
+  /**
+   * Test when Pokemon List Page fails to load the data with unknown error
+   */
+  test('Pokemon List Page loaded with unknown error', ({
+    given,
+    when,
+    then,
+  }) => {
+    given('User is on the Pokemon List Page', async () => {
+      getPokemonsListService.mockRejectedValue(mockError);
+      PokemonsListReactWrapper = mount(<PokemonsListView {...props} />);
+    });
+
+    let errorMessage: ReactWrapper;
+
+    when(
+      'there is an unknown error loading the Pokemon List Page',
+      async () => {
+        PokemonsListReactWrapper.update();
       },
     );
+
+    then('User should see a message with "Error:"', () => {
+      errorMessage = PokemonsListReactWrapper.findWhere(
+        (node) => node.is(PText) && node.prop('testID') === 'error-message',
+      );
+      expect(errorMessage.exists()).toBe(true);
+      expect(errorMessage.text()).toContain('Error:');
+    });
+
+    then('User should see "Unknown error" message for an unknown error', () => {
+      expect(errorMessage.text()).toContain('Unknown error');
+    });
   });
 
   /**
