@@ -99,55 +99,8 @@ const pokemonDetailResponseMock = {
 
 const pokemonListMock = [
   {
-    id: 1,
-    formattedId: "0001",
     name: "bulbasaur",
-    url: "https://pokeapi.co/api/v2/pokemon-species/1/",
-    image:
-      "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/1.png",
-    types: [{ name: "grass" }, { name: "poison" }],
-    stats: [
-      { name: "HP", baseStat: 45 },
-      { name: "Attack", baseStat: 49 },
-      { name: "Defense", baseStat: 49 },
-      { name: "Special Attack", baseStat: 65 },
-      { name: "Special Defense", baseStat: 65 },
-      { name: "Speed", baseStat: 45 },
-    ],
-  },
-  {
-    id: 4,
-    formattedId: "0004",
-    name: "charmander",
-    url: "https://pokeapi.co/api/v2/pokemon-species/4/",
-    image:
-      "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/4.png",
-    types: [{ name: "fire" }],
-    stats: [
-      { name: "HP", baseStat: 39 },
-      { name: "Attack", baseStat: 52 },
-      { name: "Defense", baseStat: 43 },
-      { name: "Special Attack", baseStat: 60 },
-      { name: "Special Defense", baseStat: 50 },
-      { name: "Speed", baseStat: 65 },
-    ],
-  },
-  {
-    id: 7,
-    formattedId: "0007",
-    name: "squirtle",
-    url: "https://pokeapi.co/api/v2/pokemon-species/7/",
-    image:
-      "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/7.png",
-    types: [{ name: "water" }],
-    stats: [
-      { name: "HP", baseStat: 44 },
-      { name: "Attack", baseStat: 48 },
-      { name: "Defense", baseStat: 65 },
-      { name: "Special Attack", baseStat: 50 },
-      { name: "Special Defense", baseStat: 64 },
-      { name: "Speed", baseStat: 43 },
-    ],
+    url: "https://pokeapi.co/api/v2/pokemon/1/",
   },
 ];
 

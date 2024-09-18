@@ -1,6 +1,14 @@
-import { View, SafeAreaView, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  SafeAreaView,
+  StyleSheet,
+  FlatList,
+  Platform,
+  ActivityIndicator,
+} from "react-native";
 import ComponentController from "./ComponentController";
-import { PokemonList, SearchBar } from "../../components";
+import { PokemonCard, PokemonList, SearchBar } from "../../components";
 
 export default class HomePage extends ComponentController {
   render() {
@@ -9,12 +17,8 @@ export default class HomePage extends ComponentController {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.paddingContainer}>
-          <SearchBar
-            data-test-id="search-bar"
-            onChangeText={this.onChangeText}
-          />
+          <SearchBar onChangeText={this.onChangeText} />
           <PokemonList
-            data-test-id="pokemon-list"
             pokemon={pokemon}
             isLoading={isLoading}
             onPress={navigateToDetail}

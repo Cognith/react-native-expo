@@ -7,6 +7,7 @@ import {
   pokemonDetailMock,
   pokemonDetailResponseMock,
 } from "../../../../__mocks__";
+import * as services from "../../../../services";
 
 const props = {
   navigation: {
@@ -24,18 +25,6 @@ const feature = loadFeature(
 );
 
 defineFeature(feature, (test) => {
-  let DetailPageWrapper: ShallowWrapper;
-  let instance: DetailPage;
-
-  jest.useFakeTimers(); // for debounce
-  const mockSetState = jest.fn();
-  const fetchPokemonMock = jest.fn();
-  const fetchPokemonFromParamsMock = jest.fn();
-  const formattingStatsMock = jest.fn();
-  const consoleLogMock = jest
-    .spyOn(console, "log")
-    .mockImplementation(() => {});
-
   beforeEach(() => {
     jest.resetModules();
     global.fetch = jest.fn(() =>
@@ -45,11 +34,12 @@ defineFeature(feature, (test) => {
     ) as jest.Mock;
   });
 
-  afterEach(() => {
-    mockSetState.mockRestore();
-  });
+  afterEach(() => {});
 
   test("Render Pokemon Detail", ({ given, when, then }) => {
+    let DetailPageWrapper: ShallowWrapper;
+    let instance: DetailPage;
+
     given("I am on the Detail Page", () => {
       DetailPageWrapper = shallow(<DetailPage {...props} />);
     });
@@ -66,204 +56,31 @@ defineFeature(feature, (test) => {
     });
   });
 
-  test("User types into the input field", ({ given, when, then }) => {
-    given("I am on the DetailPage", () => {
-      jest.spyOn(instance, "setState").mockImplementation(mockSetState);
-    });
-
-    when("I type a query in the input field", () => {
-      const text = "pikachu";
-      instance.onChangeText(text);
-    });
-
-    then("It should update the query state", () => {
-      expect(mockSetState).toHaveBeenCalledWith({ query: "pikachu" });
-    });
-
-    then("It should debounce the query after 500ms", () => {
-      jest.advanceTimersByTime(500);
-      expect(mockSetState).toHaveBeenCalledWith({ debouncedQuery: "pikachu" });
-    });
-  });
-
-  test("when debounceTimeout is not null", ({ given, when, then }) => {
+  test("Handle error when fetching Pokemon", ({ given, when, then }) => {
     let DetailPageWrapper: ShallowWrapper;
     let instance: DetailPage;
 
-    given("debounceTimeout is set", () => {
+    given("I am on the Detail Page", () => {
       DetailPageWrapper = shallow(<DetailPage {...props} />);
       instance = DetailPageWrapper.instance() as DetailPage;
-
-      instance.debounceTimeout = setTimeout(() => {}, 500);
-
-      jest.spyOn(global, "clearTimeout");
+      jest
+        .spyOn(services, "getPokemon")
+        .mockRejectedValue(new Error("Network Error"));
     });
 
-    when("onChangeText is triggered", () => {
-      instance.onChangeText("new text");
-    });
-
-    then("clearTimeout should be called", () => {
-      expect(clearTimeout).toHaveBeenCalled();
-    });
-  });
-
-  test("User fetch error to Pokemon Detail Page", async ({
-    given,
-    when,
-    then,
-  }) => {
-    let DetailPageWrapper: ShallowWrapper;
-    let instance: DetailPage;
-
-    given("User on the Pokemon Detail page", () => {
-      global.fetch = jest.fn(() =>
-        Promise.reject(new Error("Fetch error"))
-      ) as jest.Mock;
-
-      DetailPageWrapper = shallow(<DetailPage {...props} />);
-    });
-
-    when("User fully loaded Pokemon Detail page", () => {
-      instance = DetailPageWrapper.instance() as DetailPage;
-    });
-
-    then("User fetch error to Pokemon Detail Page", () => {
-      expect(consoleLogMock).toHaveBeenCalled();
-    });
-  });
-
-  test("fetch Pokemon when query is set", ({ given, when, then }) => {
-    let DetailPageWrapper: ShallowWrapper;
-    let instance: DetailPage;
-
-    given("User on the Pokemon Detail page", () => {
-      DetailPageWrapper = shallow(<DetailPage {...props} />);
-      instance = DetailPageWrapper.instance() as DetailPage;
-
-      // Mock the function that should be triggered
-      instance.fetchPokemon = fetchPokemonMock;
-
-      // Ensure the state is initialized
-      DetailPageWrapper.setState({ query: "", debouncedQuery: "" });
-    });
-
-    when("Query is set", () => {
-      // Update the state to have a non-empty query
-      DetailPageWrapper.setState({
-        query: "pikachu",
-        debouncedQuery: "pikachu",
-      });
-
-      // Simulate component update
-      instance.componentDidUpdate(
-        props, // previous props
-        {
-          query: "",
-          debouncedQuery: "",
-          isLoading: false,
-          pokemon: null,
-        } // previous state
-      );
-    });
-
-    then("fetchPokemon will be triggered", () => {
-      // Assert that fetchPokemon was called with the correct parameter
-      expect(fetchPokemonMock).toHaveBeenCalledWith({ name: "pikachu" });
-    });
-  });
-
-  test("fetch Pokemon when query is not set", ({ given, when, then }) => {
-    let DetailPageWrapper: ShallowWrapper;
-    let instance: DetailPage;
-
-    given("User on the Pokemon Detail page", () => {
-      DetailPageWrapper = shallow(<DetailPage {...props} />);
-      instance = DetailPageWrapper.instance() as DetailPage;
-
-      // Mock the function that should be triggered
-      instance.fetchPokemonFromParams = fetchPokemonFromParamsMock;
-
-      // Ensure the state is initialized
-      DetailPageWrapper.setState({ query: "", debouncedQuery: "" });
-    });
-
-    when("Query is not set", () => {
-      // Update the state to have a non-empty query
-      DetailPageWrapper.setState({ debouncedQuery: "haha" });
-
-      // Simulate component update
-      instance.componentDidUpdate(
-        props, // previous props
-        {
-          query: "",
-          debouncedQuery: "",
-          isLoading: false,
-          pokemon: null,
-        } // previous state
-      );
-    });
-
-    then("fetchPokemonFromParams will be triggered", () => {
-      expect(fetchPokemonFromParamsMock).toHaveBeenCalled();
-    });
-  });
-
-  test("Should update state with formatted stats when params.pokemon is present", ({
-    given,
-    when,
-    then,
-  }) => {
-    given("the component is mounted", () => {
-      DetailPageWrapper = shallow(<DetailPage {...props} />);
-      instance = DetailPageWrapper.instance() as DetailPage;
-      instance.setState = mockSetState;
-      instance.formattingStats = formattingStatsMock;
-    });
-
-    given("the route params have a pokemon with id and stats", () => {
-      formattingStatsMock.mockReturnValue(pokemonDetailMock.stats);
-    });
-
-    when("fetchPokemonFromParams is called", () => {
-      instance.fetchPokemonFromParams();
+    when("I call the API and get error", async () => {
+      await instance.fetchPokemon();
     });
 
     then(
-      "the formattingStats function should be called with the pokemon stats",
+      "It should set isLoading to false and pokemon to null in the state",
       () => {
-        expect(formattingStatsMock).toHaveBeenCalledWith(
-          pokemonDetailMock.stats
-        );
-      }
-    );
-
-    then(
-      "the state should be updated with the pokemon and formatted stats",
-      () => {
-        expect(mockSetState).toHaveBeenCalledWith({
-          pokemon: pokemonDetailMock,
+        expect(instance.state).toEqual({
+          isLoading: false,
+          pokemon: null,
+          query: "",
+          debouncedQuery: "",
         });
-      }
-    );
-  });
-
-  test("Generate URL with name", ({ given, when, then }) => {
-    let options: { id?: number; name?: string };
-    let result: string;
-
-    given('the options contain a name "bulbasaur"', () => {
-      options = { name: "bulbasaur" };
-    });
-
-    when("generatePokemonURL is called", () => {
-      result = instance.generatePokemonURL(options);
-    });
-
-    then(
-      'the URL should be "https://pokeapi.co/api/v2/pokemon/bulbasaur"',
-      () => {
-        expect(result).toBe("https://pokeapi.co/api/v2/pokemon/bulbasaur");
       }
     );
   });

@@ -7,12 +7,7 @@ const pokemonTransformer = (pokemon: any) => {
   });
 
   let pokemonStats: PokemonStat[] = [];
-  pokemon.stats.map((item: any) => {
-    pokemonStats.push({
-      name: item.stat.name,
-      baseStat: item.base_stat,
-    });
-  });
+  pokemonStats = formattingStats(pokemon.stats);
 
   const newPokemon: Pokemon = {
     id: pokemon.id,
@@ -25,6 +20,32 @@ const pokemonTransformer = (pokemon: any) => {
   };
 
   return newPokemon;
+};
+
+const formattingStats = (stats: any) => {
+  let newStats: PokemonStat[] = [];
+  stats.map((item: any) => {
+    if (item.stat.name === "hp") {
+      newStats.push({
+        baseStat: item.base_stat,
+        name: "HP",
+      });
+    } else {
+      let formattedName = item.stat.name.replace("-", " ");
+
+      const words = formattedName.split(" ");
+      for (let i = 0; i < words.length; i++) {
+        words[i] = words[i][0].toUpperCase() + words[i].substr(1);
+      }
+
+      newStats.push({
+        baseStat: item.base_stat,
+        name: words.join(" "),
+      });
+    }
+  });
+
+  return newStats;
 };
 
 export { pokemonTransformer };

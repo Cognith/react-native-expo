@@ -1,6 +1,7 @@
 import { Component } from "react";
-import { Navigation, Pokemon, PokemonStat } from "../../types";
+import { Navigation, Pokemon } from "../../types";
 import { pokemonTransformer } from "../../helpers";
+import { getPokemon } from "../../services";
 
 interface Props {
   navigation: Navigation["navigation"];
@@ -12,11 +13,6 @@ interface S {
   pokemon: Pokemon | null;
   query: string;
   debouncedQuery: string;
-}
-
-interface Options {
-  id?: number;
-  name?: string;
 }
 
 export default class ComponentController extends Component<Props, S> {
@@ -34,89 +30,23 @@ export default class ComponentController extends Component<Props, S> {
   }
 
   componentDidMount = async () => {
-    const { params } = this.props.route;
-    this.fetchPokemon({ id: params.pokemon.id });
+    this.fetchPokemon();
   };
 
-  componentDidUpdate(prevProps: Props, prevState: S) {
-    const { query, debouncedQuery } = this.state;
-    if (prevState.debouncedQuery !== debouncedQuery) {
-      if (query !== "") {
-        this.fetchPokemon({ name: query });
-      } else {
-        this.fetchPokemonFromParams();
-      }
-    }
-  }
-
-  fetchPokemonFromParams = () => {
+  fetchPokemon = async () => {
     const { params } = this.props.route;
-    const formattedStats = this.formattingStats(params.pokemon.stats);
-    this.setState({ pokemon: { ...params.pokemon, stats: formattedStats } });
-  };
-
-  fetchPokemon = async (options: Options) => {
-    const { isLoading } = this.state;
-    const url = this.generatePokemonURL(options);
-
     try {
-      console.log("Fetching Pokemon ...");
-      if (!isLoading) this.setState({ isLoading: true });
-      const pokemonResponse = await fetch(url);
-      const pokemonJson = await pokemonResponse.json();
+      this.setState({ isLoading: true });
+      const pokemonJson = await getPokemon(params.pokemon.name);
       const newPokemon = pokemonTransformer(pokemonJson);
-      const formattedStats = this.formattingStats(newPokemon.stats);
 
       this.setState({
         isLoading: false,
-        pokemon: { ...newPokemon, stats: formattedStats },
+        pokemon: newPokemon,
       });
     } catch (error: any) {
       console.log("[error] fetchPokemon", error);
       this.setState({ isLoading: false, pokemon: null });
     }
-  };
-
-  generatePokemonURL = (options: Options) => {
-    if (options.id) return `https://pokeapi.co/api/v2/pokemon/${options.id}`;
-    return `https://pokeapi.co/api/v2/pokemon/${options.name}`;
-  };
-
-  formattingStats = (stats: any) => {
-    let newStats: PokemonStat[] = [];
-    stats.map((item: any) => {
-      if (item.name === "hp") {
-        newStats.push({
-          ...item,
-          name: "HP",
-        });
-      } else {
-        let formattedName = item.name.replace("-", " ");
-
-        const words = formattedName.split(" ");
-        for (let i = 0; i < words.length; i++) {
-          words[i] = words[i][0].toUpperCase() + words[i].substr(1);
-        }
-
-        newStats.push({
-          ...item,
-          name: words.join(" "),
-        });
-      }
-    });
-
-    return newStats;
-  };
-
-  onChangeText = (text: string) => {
-    this.setState({ query: text });
-
-    if (this.debounceTimeout) {
-      clearTimeout(this.debounceTimeout);
-    }
-
-    this.debounceTimeout = setTimeout(() => {
-      this.setState({ debouncedQuery: text });
-    }, 500);
   };
 }

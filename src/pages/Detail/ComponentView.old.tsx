@@ -1,11 +1,15 @@
 import {
   View,
+  Text,
   SafeAreaView,
   StyleSheet,
+  Platform,
+  Image,
+  FlatList,
   ActivityIndicator,
 } from "react-native";
 import ComponentController from "./ComponentController";
-import { PokemonDetail } from "../../components";
+import { IdBadge, PokemonDetail, SearchBar, TypeBadge } from "../../components";
 
 export default class DetailPage extends ComponentController {
   render() {
@@ -13,8 +17,12 @@ export default class DetailPage extends ComponentController {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.paddingContainer}>
+          <SearchBar onChangeText={this.onChangeText} />
           {isLoading && <ActivityIndicator size={"large"} color={"white"} />}
           {!isLoading && pokemon && <PokemonDetail pokemon={pokemon} />}
+          {!isLoading && !pokemon && (
+            <Text style={styles.emptyDataText}>Pokemon not found</Text>
+          )}
         </View>
       </SafeAreaView>
     );

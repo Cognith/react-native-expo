@@ -37,7 +37,7 @@ export default class ComponentController extends Component<Props, S> {
     this.fetchAllPokemon();
   };
 
-  componentDidUpdate(_: Props, prevState: S) {
+  componentDidUpdate(prevProps: Props, prevState: S) {
     const { query, debouncedQuery } = this.state;
     if (prevState.debouncedQuery !== debouncedQuery) {
       if (query !== "") {
@@ -71,12 +71,11 @@ export default class ComponentController extends Component<Props, S> {
         );
         this.setState({
           isLoading: false,
-          offset: 0,
           pokemon: [...this.state.pokemon, ...pokemonArray],
         });
       } catch (error: any) {
-        this.setState({ isLoading: false, offset: 0 });
         console.log("[error] fetchAllPokemon", error);
+        this.setState({ isLoading: false });
       }
     }
   };
@@ -84,8 +83,10 @@ export default class ComponentController extends Component<Props, S> {
   fetchPokemon = async (query: string) => {
     try {
       this.setState({ isLoading: true });
+
       const pokemonJson = await getPokemon(query);
       const newPokemon = pokemonTransformer(pokemonJson);
+
       this.setState({
         isLoading: false,
         offset: 0,

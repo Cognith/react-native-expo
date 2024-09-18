@@ -22,11 +22,7 @@ export class PokemonList extends Component<Props> {
         showsVerticalScrollIndicator={false}
         keyExtractor={(item) => item.name}
         renderItem={({ item }) => (
-          <PokemonCard
-            data-test-id="pokemon-card"
-            item={item}
-            onPress={() => onPress(item)}
-          />
+          <PokemonCard item={item} onPress={() => onPress(item)} />
         )}
         ListFooterComponent={() => {
           if (isLoading) return <ActivityIndicator size="large" />;
