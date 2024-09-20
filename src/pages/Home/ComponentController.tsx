@@ -122,9 +122,4 @@ export default class ComponentController extends Component<Props, S> {
       this.setState({ offset: offset + 20 });
     }
   };
-
-  navigateToDetail = (pokemon: Pokemon) => {
-    const { navigation } = this.props;
-    navigation.navigate("Detail", { pokemon });
-  };
 }

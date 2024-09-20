@@ -3,7 +3,24 @@ Feature: Pokemon List
     Scenario: Render Pokemon List
         Given I am on the Home Page
         When I successfully load Home Page
-        Then I should see Hello World
+        Then I should see Pokemon list
+        And FlatList should has keyExtractor
+        And The Pokemon list should be rendered
+
+    Scenario: Render loading FlatList
+        Given I am on the Home Page
+        When The isLoading is true
+        Then ActivityIndicator should be displayed
+
+    Scenario: Render Pokemon Not Found text
+        Given I am on the Home Page
+        When The isLoading is false
+        Then Pokemon Not Found text should be displayed
+
+    Scenario: Search unknown pokemon
+        Given I am on the Home Page
+        When User search unknown pokemon
+        Then Pokemon Not Found text should be displayed
 
     Scenario: should update state with new Pokémon on successful fetch
         Given jest.spyOn is used to mock getPokemon with a resolved promise

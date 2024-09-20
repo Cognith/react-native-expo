@@ -9,18 +9,21 @@ import {
 } from "react-native";
 import IdBadge from "../IdBadge";
 import TypeBadge from "../TypeBadge";
-import { Pokemon } from "../../types";
+import { Navigation, Pokemon } from "../../types";
 
 interface Props {
   item: Pokemon;
-  onPress?: ((event: GestureResponderEvent) => void) | undefined;
+  navigation: Navigation["navigation"];
 }
 
 export class PokemonCard extends Component<Props> {
   render() {
-    const { item, onPress } = this.props;
+    const { item, navigation } = this.props;
     return (
-      <TouchableOpacity style={styles.container} onPress={onPress}>
+      <TouchableOpacity
+        style={styles.container}
+        onPress={() => navigation.navigate("Details", { item })}
+      >
         <View style={styles.firstRow}>
           <IdBadge type={item.types[0].name} formattedId={item.formattedId} />
         </View>
@@ -33,7 +36,9 @@ export class PokemonCard extends Component<Props> {
           />
         </View>
         <View style={styles.thirdRow}>
-          <Text style={styles.nameText}>{item.name}</Text>
+          <Text data-test-id="pokemon-name" style={styles.nameText}>
+            {item.name}
+          </Text>
         </View>
         <View style={styles.fourthRow}>
           {item.types.map((item, index) => (
