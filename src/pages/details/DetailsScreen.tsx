@@ -1,5 +1,5 @@
 import React from "react";
-import DetailsComponent from '../../../components/DetailsComponent'
+import DetailsComponent from '../../components/DetailsComponent'
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 

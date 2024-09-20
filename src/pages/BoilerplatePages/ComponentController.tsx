@@ -14,6 +14,7 @@ interface HomeControllerState {
   loadingMore: boolean;
   offset: number;
   searchQuery: string;
+  specialCondition: boolean; // Make specialCondition optional
 }
 
 const limit = 20;
@@ -31,6 +32,7 @@ export default abstract class HomeController<T> extends React.Component<
       loadingMore: false,
       offset: 0,
       searchQuery: "",
+      specialCondition: false, // Initialize specialCondition
     };
   }
 
@@ -80,7 +82,6 @@ export default abstract class HomeController<T> extends React.Component<
     });
   }
   
-
   handleSearch = (text: string) => {
     this.setState({ searchQuery: text });
 

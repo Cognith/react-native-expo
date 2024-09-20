@@ -31,6 +31,7 @@
     "@types/babel__core": "~7.20.5",
     "@types/enzyme": "~3.10.18",
     "@types/jest": "^29.5.12",
+    "@types/lodash": "^4.17.7",
     "@types/react": "~17.0.80",
     "@types/react-dom": "~17.0.25",
     "@types/react-native": "~0.64.38",
@@ -44,7 +45,9 @@
   },
   "jest": {
     "moduleNameMapper": {
-      "^react-native$": "react-native-web"
+      "^react-native$": "react-native-web",
+      "^react-native/(.*)": "react-native-web/dist/cjs/$1",
+      "react-native-vector-icons": "react-native-vector-icons/dist/index.js"
     },
     "setupFilesAfterEnv": [
       "<rootDir>/node_modules/jest-enzyme/lib/index.js"

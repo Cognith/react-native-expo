@@ -14,7 +14,7 @@ const Stack = createNativeStackNavigator<RootStackParam>();
 const Navigation: React.FC = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator initialRouteName="Home">
         <Stack.Screen
           name="Home"
           component={HomePage}
