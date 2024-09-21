@@ -1,10 +1,10 @@
 import { defineFeature, loadFeature } from "jest-cucumber";
 import { shallow, ShallowWrapper } from "enzyme";
 import React from "react";
-import DetailsScreen from "../DetailsScreen";
+import DetailsScreen from "../../DetailsScreen";
 import DetailsComponent from "../../../../components/DetailsComponent";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { RootStackParam } from "../DetailsScreen";
+import { RootStackParam } from "../../DetailsScreen";
 
 const feature = loadFeature(
   "./src/pages/BoilerplatePages/details/__tests__/features/DetailsScreen.feature"

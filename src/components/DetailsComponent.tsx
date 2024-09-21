@@ -1,9 +1,9 @@
 import React from "react";
 import { View, Text, Image, ScrollView } from "react-native";
-import { useDetailsController } from "../pages/BoilerplatePages/details/DetailsController";
+import { useDetailsController } from "../pages/details/DetailsController";
 import { styles } from "../constanst/DetailsStyles";
 import { RouteProp } from "@react-navigation/native";
-import { RootStackParam } from "../pages/BoilerplatePages/details/DetailsScreen";
+import { RootStackParam } from "../pages/details/DetailsScreen";
 
 type DetailsComponentProps = {
   route: RouteProp<RootStackParam, "Detail">;

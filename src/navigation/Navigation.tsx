@@ -2,7 +2,7 @@ import * as React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import HomePage from "../pages/BoilerplatePages/ComponentView";
-import DetailsScreen from "../pages/BoilerplatePages/details/DetailsScreen";
+import DetailsScreen from "../pages/details/DetailsScreen";
 
 type RootStackParam = {
   Home: undefined;
