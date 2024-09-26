@@ -7,7 +7,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParam } from "../../DetailsScreen";
 
 const feature = loadFeature(
-  "./src/pages/BoilerplatePages/details/__tests__/features/DetailsScreen.feature"
+  "./src/pages/details/__tests__/features/DetailsScreen.feature"
 );
 
 type DetailsScreenProps = NativeStackScreenProps<RootStackParam, "Detail">;

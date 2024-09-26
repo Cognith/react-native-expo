@@ -1,33 +1,78 @@
-// HomePage.tsx
 import React from "react";
-import { SafeAreaView, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  Image,
+  TouchableOpacity,
+  ActivityIndicator,
+  TextInput,
+} from "react-native";
+import HomeController from "../BoilerplatePages/ComponentController";
+import { styles } from "../../constanst/HomeStyles"; // Fix the path here
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { styles } from "../../constanst/HomeStyles";
-import HomeComponent from "../../components/HomeComponent"; // Import HomeComponent
 
 export type RootStackParam = {
   Home: undefined;
   Detail: { pokemonUrl: string };
 };
 
-type HomePageProps = NativeStackScreenProps<RootStackParam, "Home">;
+type HomeComponentProps = NativeStackScreenProps<RootStackParam, 'Home'>;
 
-export default class HomePage extends React.Component<HomePageProps> {
+class HomePage extends HomeController<HomeComponentProps> { 
   render(): JSX.Element {
-    const { navigation, route } = this.props;
+    const { navigation } = this.props; 
+    const {
+      filteredPokemonList,
+      loading,
+      loadingMore,
+      searchQuery,
+    } = this.state;
 
-    // Provide a default or mock route if necessary
-    const mockRoute = {
-      params: {
-        // Your default or mock route params here
-      }
+    const renderItem = ({ item }: { item: { id: number; name: string; imageUrl: string; url: string } }) => (
+      <TouchableOpacity
+        style={styles.item}
+        onPress={() => navigation.navigate("Detail", { pokemonUrl: item.url })}
+      >
+        <Image source={{ uri: item.imageUrl }} style={styles.pokemonImage} />
+        <View style={styles.pokemonInfo}>
+          <Text style={styles.pokemonName}>{item.name}</Text>
+          <Text>(#{item.id})</Text>
+        </View>
+      </TouchableOpacity>
+    );
+
+    const renderFooter = () => {
+      if (!loadingMore) return null;
+      return <ActivityIndicator style={{ marginVertical: 20 }} size="large" />;
     };
 
     return (
-      <SafeAreaView style={styles.container}>
-        {/* Render HomeComponent and pass necessary props */}
-        <HomeComponent navigation={navigation} route={route || mockRoute} />
-      </SafeAreaView>
+      <View style={styles.container}>
+        <TextInput
+          testID="search-bar" 
+          style={styles.searchBar}
+          placeholder="Search Pokemon by name or ID"
+          value={searchQuery}
+          onChangeText={this.handleSearch}
+        />
+        {loading ? (
+          <ActivityIndicator size="large" color="#0000ff" />
+        ) : (
+          <FlatList
+            testID="pokemon-list" 
+            data={filteredPokemonList}
+            renderItem={renderItem}
+            keyExtractor={(item) => `${item.id}`} 
+            onEndReached={this.handleLoadMore}
+            onEndReachedThreshold={0.5}
+            ListFooterComponent={renderFooter}
+            numColumns={2}
+          />
+        )}
+      </View>
     );
   }
 }
+
+export default HomePage;

@@ -14,7 +14,7 @@ interface HomeControllerState {
   loadingMore: boolean;
   offset: number;
   searchQuery: string;
-  specialCondition: boolean; // Make specialCondition optional
+  specialCondition: boolean; 
 }
 
 const limit = 20;

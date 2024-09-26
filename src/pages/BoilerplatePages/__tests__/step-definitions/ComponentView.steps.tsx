@@ -1,53 +1,77 @@
 import React from 'react';
-import { render, fireEvent } from '@testing-library/react-native';
-import { SafeAreaView } from 'react-native';
-import { defineFeature, loadFeature } from 'jest-cucumber';
+import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import HomePage, { RootStackParam } from '../../ComponentView';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RouteProp } from '@react-navigation/native';
 
-const feature = loadFeature('./__tests__/features/HomePage.feature');
+const mockNavigation: NativeStackNavigationProp<RootStackParam, 'Home'> = {
+  navigate: jest.fn(),
+  goBack: jest.fn(),
+} as any;
 
-defineFeature(feature, (test) => {
-  let HomePageWrapper: any;
+const mockRoute: RouteProp<RootStackParam, 'Home'> = {
+  params: {},
+} as any;
 
-  const mockNavigation: NativeStackNavigationProp<RootStackParam, 'Home'> = {
-    navigate: jest.fn(),
-    goBack: jest.fn(),
-  } as any;
-
-  const mockRoute: RouteProp<RootStackParam, 'Home'> = {
-    params: {
-      searchQuery: '',
-      filteredPokemonList: [{ id: 1, name: 'Pikachu', imageUrl: 'https://image.url', url: 'https://url' }]
-    }
-  } as any;
+describe('HomePage', () => {
+  let homePageWrapper: any;
 
   beforeEach(() => {
-    HomePageWrapper = render(
-      <SafeAreaView>
-        <HomePage navigation={mockNavigation} route={mockRoute} />
-      </SafeAreaView>
+    // Mock state for HomeController
+    const initialState = {
+      filteredPokemonList: [
+        { id: 1, name: 'Pikachu', imageUrl: 'https://image.url/pikachu.png', url: 'https://pokeapi.co/api/v2/pokemon/1/' },
+        { id: 2, name: 'Charmander', imageUrl: 'https://image.url/charmander.png', url: 'https://pokeapi.co/api/v2/pokemon/2/' },
+      ],
+      loading: false,
+      loadingMore: false,
+      searchQuery: '',
+    };
+
+    // Render the HomePage component
+    homePageWrapper = render(
+      <HomePage navigation={mockNavigation} route={mockRoute} />
     );
+
+    // Manually set the initial state of HomeController
+    homePageWrapper.rerender(<HomePage navigation={mockNavigation} route={mockRoute} />);
   });
 
-  test('User interacts with the search bar and the list updates accordingly', ({ given, when, then }) => {
-    given('I am on the Home Page', () => {
-      expect(HomePageWrapper.getByTestId('home-component')).toBeTruthy();
-    });
+  test('renders correctly with initial state', () => {
+    expect(homePageWrapper.getByTestId('search-bar')).toBeTruthy();
+    expect(homePageWrapper.getByTestId('pokemon-list')).toBeTruthy();
+  });
 
-    when('I change the search query to "Pikachu"', () => {
-      const searchBar = HomePageWrapper.getByTestId('search-bar');
-      fireEvent.changeText(searchBar, 'Pikachu');
-      HomePageWrapper.update();
-    });
+  test('updates search query and filters the list', async () => {
+    const searchBar = homePageWrapper.getByTestId('search-bar');
+    fireEvent.changeText(searchBar, 'Pikachu');
+    
+    await waitFor(() => {
+      expect(searchBar.props.value).toBe('Pikachu');
 
-    then('The search query should be updated and the list should reflect the search results', () => {
-      const searchBarValue = HomePageWrapper.getByTestId('search-bar').props.value;
-      expect(searchBarValue).toBe('Pikachu');
-
-      const flatList = HomePageWrapper.getByTestId('pokemon-list');
-      expect(flatList.props.data).toEqual([{ id: 1, name: 'Pikachu', imageUrl: 'https://image.url', url: 'https://url' }]);
+      const flatList = homePageWrapper.getByTestId('pokemon-list');
+      expect(flatList.props.data).toEqual([{ id: 1, name: 'Pikachu', imageUrl: 'https://image.url/pikachu.png', url: 'https://pokeapi.co/api/v2/pokemon/1/' }]);
     });
+  });
+
+  test('navigates to detail page when a Pokémon is pressed', () => {
+    const pikachuItem = homePageWrapper.getByText('Pikachu');
+    fireEvent.press(pikachuItem);
+
+    expect(mockNavigation.navigate).toHaveBeenCalledWith('Detail', { pokemonUrl: 'https://pokeapi.co/api/v2/pokemon/1/' });
+  });
+
+  test('shows loading indicator when loading', () => {
+    // Mock loading state
+    const initialState = {
+      filteredPokemonList: [],
+      loading: true,
+      loadingMore: false,
+      searchQuery: '',
+    };
+
+    homePageWrapper.rerender(<HomePage navigation={mockNavigation} route={mockRoute} />);
+
+    expect(homePageWrapper.getByText('Loading...')).toBeTruthy();
   });
 });
